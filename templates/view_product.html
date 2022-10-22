@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% for key, val in product.items() %}
+        <p>{{ key }}-{{ val }}</p>
+    {% endfor %}
+{% endblock %}

@@ -7,7 +7,8 @@
     <ul class="list-posts">
         {% for p in products %}
             <li>
-                <p class="title"><a href="#">{{ p.product_name }}</a></p>
+                <p class="title"><a
+                        href="{{ url_for('detail_product_page', product_id=p.id) }}">{{ p.product_name }}</a></p>
                 <p class="annonce">{{ p.id }}</p>
             </li>
         {% endfor %}

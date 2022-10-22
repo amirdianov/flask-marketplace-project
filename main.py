@@ -76,7 +76,7 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile_page():
-    return render_template('/profile.html')
+    return render_template('profile.html')
 
 
 @app.route("/add_product", methods=["POST", "GET"])
@@ -93,6 +93,11 @@ def add_product_page():
 
     return render_template('add_product.html', title="Добавление продукта")
 
+
+@app.route("/view_product/<int:product_id>", methods=["POST", "GET"])
+def detail_product_page(product_id):
+    product = db.getProductById(product_id)
+    return render_template('view_product.html', product=product)
 
 @login_manager.user_loader
 def load_user(user_id):

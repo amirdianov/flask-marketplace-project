@@ -42,6 +42,14 @@ class Database:
             return res
         return []
 
+    def getProductById(self, product_id):
+        query = f"SELECT * FROM products where id='{product_id}'"
+        self.cur.execute(query)
+        res = self.prepare_data(self.cur.fetchall())
+        if res:
+            return res[0]
+        return []
+
     def addProduct(self, product_name, text_info):
         tm = math.floor(time.time())
         query = f"INSERT INTO products (product_name, price, text_info) values ('{product_name}',{tm},'{text_info}')"
