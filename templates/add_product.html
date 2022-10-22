@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block nav %}
+    <a class="nav-link" aria-current="page" href={{ url_for('main_page_all') }}>Главная страница</a>
+    <a class="nav-link" aria-current="page" href={{ url_for('registration_page') }}>Личный кабинет</a>
+    <a class="nav-link active" aria-current="page" href={{ url_for('registration_page') }}>Добавить продукт</a>
+    <a class="nav-link" href={{ url_for('login_page') }}>Выйти</a>
+{% endblock %}
+{% block content %}
+    {{ super() }}
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+    {% endfor %}
+    <form method="post" action="{{ url_for('add_product_page') }}">
+        <p><label>Название статьи:<input type="text" name="name" value=""></label>
+        <p><label>Текст статьи:<textarea name="post" rows=7 cols=40></textarea></label>
+        <p><input type="submit" value="Добавить"/>
+    </form>
+{% endblock %}

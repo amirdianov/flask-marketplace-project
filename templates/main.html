@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ super() }}
+    <hr>
+    <h2>Список статей</h2>
+    <ul class="list-posts">
+        {% for p in products %}
+            <li>
+                <p class="title"><a href="#">{{ p.product_name }}</a></p>
+                <p class="annonce">{{ p.id }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
