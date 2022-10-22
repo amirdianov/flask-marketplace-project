@@ -34,8 +34,21 @@ class Database:
         )
         self.cur = self.con.cursor()
 
-    def getProducts(self):
-        query = f"SELECT id, product_name, text_info FROM products"
+    def getProducts(self, cat, search):
+        # query = f"SELECT id, product_name, text_info FROM products"
+
+        if cat and search:
+            query = f"SELECT id, product_name, text_info FROM products where " \
+                    f"category='{cat}' and (product_name LIKE '%{search}%' or text_info LIKE '%{search}%')"
+        elif cat:
+            query = f"SELECT id, product_name, text_info FROM products where " \
+                    f"category='{cat}'"
+        elif search:
+            query = f"SELECT id, product_name, text_info FROM products where " \
+                    f"(product_name LIKE '%{search}%' or text_info LIKE '%{search}%')"
+        else:
+            query = f"SELECT id, product_name, text_info FROM products"
+
         self.cur.execute(query)
         res = self.prepare_data(self.cur.fetchall())
         if res:
@@ -50,12 +63,20 @@ class Database:
             return res[0]
         return []
 
+    def getCategories(self):
+        query = f'SELECT * FROM products_categories'
+        self.cur.execute(query)
+        res = self.prepare_data(self.cur.fetchall())
+        if res:
+            return res
+        else:
+            []
+
     def addProduct(self, product_name, text_info):
         tm = math.floor(time.time())
         query = f"INSERT INTO products (product_name, price, text_info) values ('{product_name}',{tm},'{text_info}')"
         self.cur.execute(query)
         self.con.commit()
-
         return True
 
     def getUser(self, user_id):

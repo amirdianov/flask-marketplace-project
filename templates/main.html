@@ -4,6 +4,22 @@
     {{ super() }}
     <hr>
     <h2>Список статей</h2>
+    <form class="d-flex" action="/" method="get">
+        <input class="form-control me-2" type="text" name="search" placeholder="Поиск..."
+               value="{{ search }}">
+
+        <select name="category">
+            <option value="">Выберите категрию</option>
+            {% for cat in categories %}
+                <option
+                        value="{{ cat.id }}"
+                        {% if category_selected_id == cat.id %}selected{% endif %}>
+                    {{ cat.category_name }}
+                </option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-outline-success">Найти</button>
+    </form>
     <ul class="list-posts">
         {% for p in products %}
             <li>

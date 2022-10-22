@@ -15,7 +15,13 @@ login_manager.login_message = "Авторизуйтесь для доступа 
 # Гланвая страница доступна всем пользователям
 @app.route('/')
 def main_page_all():
-    return render_template('main.html', products=db.getProducts())
+    cat = request.args.get('category')
+    search = request.args.get('search')
+    params = {'products': db.getProducts(cat, search),
+              'categories': db.getCategories(),
+              'category_selected_id': int(cat) if cat else None,
+              'search': search if search else ''}
+    return render_template('main.html', **params)
 
 
 # Страница регистрации, если пользователь успешно регистрируется,
@@ -98,6 +104,7 @@ def add_product_page():
 def detail_product_page(product_id):
     product = db.getProductById(product_id)
     return render_template('view_product.html', product=product)
+
 
 @login_manager.user_loader
 def load_user(user_id):
