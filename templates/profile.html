@@ -9,5 +9,9 @@
     <a class="nav-link" href={{ url_for('logout') }}>Выйти</a>
 {% endblock %}
 {% block content %}
-    <h1>Hello</h1>
+    <div class="profile-ava"><img src="{{ url_for('userava') }}" alt=""></div>
+    <form action="{{ url_for('upload_avatar') }}" method="post" enctype="multipart/form-data">
+        <p><input type="file" name="file"></p>
+        <p><input type="submit" value="Загрузить"></p>
+    </form>
 {% endblock %}

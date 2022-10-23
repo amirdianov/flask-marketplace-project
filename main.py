@@ -1,15 +1,23 @@
+import os
+
 from flask import Flask, render_template, request, url_for, redirect, make_response, session, flash
 from db_util import Database, UserLogin
 from forms import RegistrationForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, login_user, current_user, logout_user
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'inform_project'
 db = Database()
+# Для регистрации пользователя
 login_manager = LoginManager(app)
 login_manager.login_view = 'login_page'
 login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
+# Для максимального объема хранения данных
+MAX_CONTENT_LENGTH = 1024 * 1024
+UPLOAD_FOLDER = 'static/media/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 # Гланвая страница доступна всем пользователям
@@ -83,6 +91,40 @@ def logout():
 @login_required
 def profile_page():
     return render_template('profile.html')
+
+
+@app.route('/userava')
+@login_required
+def userava():
+    img = current_user.getAvatar(app)
+    if not img:
+        return ''
+    h = make_response(img)
+    h.headers['Content-Type'] = 'image/png'
+    return h
+
+
+# Метод для загрузки автара профиля
+@app.route('/upload_avatar', methods=['POST', 'GET'])
+@login_required
+def upload_avatar():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and current_user.verifyExt(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            print(filename)
+            if db.deleteUserAvater(current_user.get_id()):
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'],
+                                       db.deleteUserAvater(current_user.get_id())))
+            res = db.updateUserAvatar(filename, current_user.get_id())
+            if not res:
+                flash("Ошибка обновления аватара", "error")
+            flash("Аватар обновлен", "success")
+        else:
+            flash("Ошибка обновления аватара", "error")
+
+    return redirect(url_for('profile_page'))
 
 
 @app.route("/add_product", methods=["POST", "GET"])

@@ -1,7 +1,9 @@
 import math
+import os
 import time
 
 import psycopg2
+from flask import url_for
 from psycopg2 import OperationalError
 
 from flask_login import UserMixin
@@ -21,6 +23,26 @@ class UserLogin(UserMixin):
 
     def get_category(self):
         return str(self.__user['category'])
+
+    def getAvatar(self, app):
+        img = None
+        if not self.__user['profile']:
+            with app.open_resource(app.root_path + url_for('static', filename='media/default_avatar.png'),
+                                   'rb') as f:
+                img = f.read()
+                print(img)
+        else:
+            img = self.__user['profile']
+            with app.open_resource(app.root_path + url_for('static', filename=f'media/{img}'),
+                                   'rb') as f:
+                img = f.read()
+        return img
+
+    def verifyExt(self, filename):
+        ext = filename.rsplit('.', 1)[1]
+        if ext == "png" or ext == "PNG":
+            return True
+        return False
 
 
 class Database:
@@ -111,6 +133,20 @@ class Database:
         self.cur.execute(query)
         self.con.commit()
         return True
+
+    def updateUserAvatar(self, avatar, user_id):
+        if not avatar:
+            return False
+        self.cur.execute(f"UPDATE users SET profile = '{avatar}' where id = {user_id}")
+        self.con.commit()
+        return True
+
+    def deleteUserAvater(self, get_id):
+        query = f"SELECT profile FROM users WHERE id = '{get_id}'"
+        self.cur.execute(query)
+        filename = self.prepare_data(self.cur.fetchall())[0]
+        if filename['profile']:
+            return filename['profile']
 
     def prepare_data(self, data):
         products = []
