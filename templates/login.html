@@ -9,21 +9,27 @@
     {% for cat, msg in get_flashed_messages(True) %}
         <div class='flash'>{{ msg }}</div>
     {% endfor %}
-    <form action="" method="post" class="form-contact">
+    <form action="" method="post">
         {{ form.hidden_tag() }}
-
-        {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
-            <p>{{ field.label() }}
-            {% if field.errors %}
-                {{ field(class="invalid") }}
-                {% for e in field.errors %}
-                    {{ e }}
-                {% endfor %}
-            {% else %}
-                {{ field() }}
-            {% endif %}
-        {% endfor %}
-        <p>{{ form.remember.label() }} {{ form.remember() }}
-        <p>{{ form.submit() }}
+        <div class="wrap">
+            <div class="d-flex flex-column align-items-center justify-content-center login">
+                <div class="d-flex flex-column align-items-center justify-content-center cont-form">
+                    {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
+                        <div>{{ field.label(class="form-label") }}</div>
+                        {% if field.errors %}
+                            {{ field(class="form-control invalid") }}
+                            {% for e in field.errors %}
+                                {{ e }}
+                            {% endfor %}
+                        {% else %}
+                            <div>{{ field(class="form-control") }}</div>
+                        {% endif %}
+                    {% endfor %}
+                    <div><p>{{ form.remember.label(class='form-check-label') }} {{ form.remember() }}</div>
+                    <div><p>{{ form.submit(class="btn btn-primary") }}</div>
+                </div>
+            </div>
+        </div>
+        </div>
     </form>
 {% endblock %}

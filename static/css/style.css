@@ -13,3 +13,19 @@ body {
 .form-contact .invalid-feedback {
     color: #CC0000;
 }
+
+.form-control {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 25px;
+    width: 200px;
+    margin: 10px 10px 10px 10px;
+}
+.login{
+    background-color: #3A7734;
+    /*width: 500px;*/
+    height: 500px;
+}
+.cont-form{
+    background-color: #3B666B;
+}

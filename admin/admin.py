@@ -60,3 +60,9 @@ def add_product_page():
             flash('Ошибка добавления статьи 2', category='error')
 
     return render_template('admin/add_product.html', title="Добавление продукта")
+
+
+@admin.route("/view_product/<int:product_id>", methods=["POST", "GET"])
+def detail_product_page(product_id):
+    product = db.getProductById(product_id)
+    return render_template('view_product.html', product=product)

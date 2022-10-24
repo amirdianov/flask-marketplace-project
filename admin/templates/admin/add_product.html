@@ -10,7 +10,7 @@
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{ cat }}">{{ msg }}</div>
     {% endfor %}
-    <form method="post" action="{{ url_for('add_product_page') }}">
+    <form method="post" action="{{ url_for('.add_product_page') }}">
         <p><label>Название статьи:<input type="text" name="name" value=""></label>
         <p><label>Текст статьи:<textarea name="post" rows=7 cols=40></textarea></label>
         <p><input type="submit" value="Добавить"/>

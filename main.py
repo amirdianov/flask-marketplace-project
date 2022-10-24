@@ -37,10 +37,7 @@ def main_page_all():
               'search': search if search else ''}
     if request.method == 'POST':
         # delete_backet()
-        if not session.get('backet'):
-            make_products_backet()
         add_product_backet(request.form['backet_go'])
-
 
     return render_template('main.html', **params)
 
@@ -56,17 +53,16 @@ def check_product_in_backet():
 def add_product_backet(product_id):
     session['backet'] += [{'product_id': product_id}]
     print(session['backet'])
-    # if product_id in session['backet']:
-    #     session['backet'][product_id] += 1
-    #     print('Увеличили')
-    # else:
-    #     session['backet'][product_id] = 1
-    #     print('Добавлен новый продукт')
-    # print(session['backet'])
 
 
 def delete_backet():
     session.pop('backet', None)
+
+
+@app.route('/backet', methods=['GET', 'POST'])
+def backet():
+    print(session['backet'])
+    return render_template('backet.html', products=session['backet'])
 
 
 # Страница регистрации, если пользователь успешно регистрируется,
@@ -102,6 +98,7 @@ def login_page():
             userlogin = UserLogin().create(user)
             rm = form.remember.data
             login_user(userlogin, remember=rm)
+            make_products_backet()
             return redirect(request.args.get("next") or url_for("profile_page"))
         else:
             flash("Неверная пара логин/пароль", "error")
@@ -112,6 +109,7 @@ def login_page():
 @login_required
 def logout():
     logout_user()
+    delete_backet()
     flash("Вы вышли из аккаунта", "success")
     return redirect(url_for('login_page'))
 
