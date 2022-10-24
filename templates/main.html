@@ -27,6 +27,9 @@
                         href="{{ url_for('detail_product_page', product_id=p.id) }}">{{ p.product_name }}</a></p>
                 <p class="annonce">{{ p.id }}</p>
             </li>
+            <form action="{{ url_for('main_page_all') }}" method="POST">
+                <button id="button_backet" name="backet_go" value="{{ p.id }}" type="submit">В корзину</button>
+            </form>
         {% endfor %}
     </ul>
     <a href="{{ url_for('admin.index') }}">Админ-панель</a></p>

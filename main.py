@@ -26,8 +26,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.register_blueprint(admin, url_prefix='/admin')
 
 
-# Гланвая страница доступна всем пользователям
-@app.route('/')
+# Главная страница доступна всем пользователям
+@app.route('/', methods=['GET', 'POST'])
 def main_page_all():
     cat = request.args.get('category')
     search = request.args.get('search')
@@ -35,7 +35,38 @@ def main_page_all():
               'categories': db.getCategories(),
               'category_selected_id': int(cat) if cat else None,
               'search': search if search else ''}
+    if request.method == 'POST':
+        # delete_backet()
+        if not session.get('backet'):
+            make_products_backet()
+        add_product_backet(request.form['backet_go'])
+
+
     return render_template('main.html', **params)
+
+
+def make_products_backet():
+    session['backet'] = []
+
+
+def check_product_in_backet():
+    return True if 'backet' in session.keys() else False
+
+
+def add_product_backet(product_id):
+    session['backet'] += [{'product_id': product_id}]
+    print(session['backet'])
+    # if product_id in session['backet']:
+    #     session['backet'][product_id] += 1
+    #     print('Увеличили')
+    # else:
+    #     session['backet'][product_id] = 1
+    #     print('Добавлен новый продукт')
+    # print(session['backet'])
+
+
+def delete_backet():
+    session.pop('backet', None)
 
 
 # Страница регистрации, если пользователь успешно регистрируется,
