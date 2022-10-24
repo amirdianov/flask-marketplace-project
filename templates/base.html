@@ -25,9 +25,6 @@
                         страница</a>
                     {% if  current_user.is_authenticated %}
                         <a class="nav-link" href={{ url_for('profile_page') }}>Личный кабинет</a>
-                        {% if current_user.get_category() == '1' %}
-                            <a class="nav-link" href={{ url_for('add_product_page') }}>Добавить продукт</a>
-                        {% endif %}
                         <a class="nav-link" href={{ url_for('logout') }}>Выйти</a>
                     {% else %}
                         <a class="nav-link" aria-current="page" href={{ url_for('registration_page') }}>Зарегистрироваться</a>

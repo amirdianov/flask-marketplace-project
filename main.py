@@ -125,21 +125,6 @@ def upload_avatar():
     return redirect(url_for('profile_page'))
 
 
-@app.route("/add_product", methods=["POST", "GET"])
-def add_product_page():
-    if request.method == "POST":
-        if len(request.form['name']) > 4 and len(request.form['post']) > 10:
-            res = db.addProduct(request.form['name'], request.form['post'])
-            if not res:
-                flash('Ошибка добавления статьи 1', category='error')
-            else:
-                flash('Статья добавлена успешно', category='success')
-        else:
-            flash('Ошибка добавления статьи 2', category='error')
-
-    return render_template('add_product.html', title="Добавление продукта")
-
-
 @app.route("/view_product/<int:product_id>", methods=["POST", "GET"])
 def detail_product_page(product_id):
     product = db.getProductById(product_id)

@@ -1,14 +1,9 @@
 from flask import Blueprint, request, flash, redirect, url_for, render_template, session
 
+from db_util import Database
+
 admin = Blueprint('admin', __name__, template_folder='templates', static_folder='static')
-
-
-@admin.route('/')
-def index():
-    if not isLogged():
-        return redirect(url_for('.login'))
-
-    return render_template('admin/index.html', title='Админ-панель')
+db = Database()
 
 
 def login_admin():
@@ -21,6 +16,14 @@ def isLogged():
 
 def logout_admin():
     session.pop('admin_logged', None)
+
+
+@admin.route('/')
+def index():
+    if not isLogged():
+        return redirect(url_for('.login'))
+
+    return render_template('admin/index.html', title='Админ-панель')
 
 
 @admin.route('/login', methods=['POST', 'GET'])
@@ -42,3 +45,18 @@ def logout():
         return redirect(url_for('.login'))
     logout_admin()
     return redirect(url_for('.login'))
+
+
+@admin.route("/add_product", methods=["POST", "GET"])
+def add_product_page():
+    if request.method == "POST":
+        if len(request.form['name']) > 4 and len(request.form['post']) > 10:
+            res = db.addProduct(request.form['name'], request.form['post'])
+            if not res:
+                flash('Ошибка добавления статьи 1', category='error')
+            else:
+                flash('Статья добавлена успешно', category='success')
+        else:
+            flash('Ошибка добавления статьи 2', category='error')
+
+    return render_template('admin/add_product.html', title="Добавление продукта")
