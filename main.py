@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template, request, url_for, redirect, make_response, session, flash
 from db_util import Database, UserLogin
-from forms import RegistrationForm
+from forms import RegistrationForm, LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, login_user, current_user, logout_user
 from werkzeug.utils import secure_filename
@@ -37,26 +37,18 @@ def main_page_all():
 @app.route('/registration', methods=['GET', 'POST'])
 def registration_page():
     if current_user.is_authenticated:
-        return redirect(url_for('profile_page'))
-    if request.method == 'POST':
+        return redirect(url_for('profile'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
         session.pop('_flashes', None)
-        if len(request.form['name']) > 1 and len(request.form['email']) > 4 and \
-                request.form['psw'] == request.form['psw2']:
-            hash = generate_password_hash(request.form['psw'])
-            res = db.addUser(request.form['email'], hash)
-            if res:
-                flash("Вы успешно зарегистрированы", "success")
-                return redirect(url_for('login_page'))
-            else:
-                flash("Ошибка при добавлении в БД", "error")
+        hash = generate_password_hash(form.password.data)
+        res = db.addUser(form.email.data, hash)
+        if res:
+            flash("Вы успешно зарегистрированы", "success")
+            return redirect(url_for('login_page'))
         else:
-            flash("Неверно заполнены поля", "error")
-
-    return render_template("registration.html", title="Регистрация")
-    # form = RegistrationForm()
-    # if form.validate_on_submit():
-    #     return redirect(url_for('main_page_personal', username=request.form.get("email")))
-    # return render_template('registration.html', title='Авторизация', form=form)
+            flash("Ошибка при добавлении в БД", "error")
+    return render_template("registration.html", title="Регистрация", form=form)
 
 
 # Страница для авторизации
@@ -65,17 +57,18 @@ def login_page():
     # заглушка, чтобы нельзя было перейти по данному адресу пользователю
     # который уже зарегистрирован
     if current_user.is_authenticated:
-        return redirect(url_for('profile_page'))
-    if request.method == "POST":
-        user = db.getUserByEmail(request.form['email'])
-        if user and check_password_hash(user['password'], request.form['psw']):
+        return redirect(url_for('profile'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = db.getUserByEmail(form.email.data)
+        if user and check_password_hash(user['password'], form.password.data):
             userlogin = UserLogin().create(user)
-            login_user(userlogin)
+            rm = form.remember.data
+            login_user(userlogin, remember=rm)
             return redirect(request.args.get("next") or url_for("profile_page"))
-
-        flash("Неверная пара логин/пароль", "error")
-
-    return render_template("login.html", title="Авторизация")
+        else:
+            flash("Неверная пара логин/пароль", "error")
+    return render_template("login.html", title="Авторизация", form=form)
 
 
 @app.route('/logout')
@@ -112,11 +105,10 @@ def upload_avatar():
         file = request.files['file']
         if file and current_user.verifyExt(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            print(filename)
-            if db.deleteUserAvater(current_user.get_id()):
-                os.remove(os.path.join(app.config['UPLOAD_FOLDER'],
-                                       db.deleteUserAvater(current_user.get_id())))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'profiles/', filename))
+            if db.deleteUserAvatar(current_user.get_id()):
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'profiles/',
+                                       db.deleteUserAvatar(current_user.get_id())))
             res = db.updateUserAvatar(filename, current_user.get_id())
             if not res:
                 flash("Ошибка обновления аватара", "error")

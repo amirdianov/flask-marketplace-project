@@ -9,28 +9,28 @@
     {% for msg in get_flashed_messages(True) %}
         <div class='flash'>{{ msg }}</div>
     {% endfor %}
-    <form action="/registration" method="post" class="form-content">
-        <p><label>Name:<input type="text" name="name" value=""></label>
-        <p><label>Email:<input type="text" name="email" value=""></label>
-        <p><label>Password:<input type="text" name="psw" value=""></label>
-        <p><label>Again password:<input type="text" name="psw2" value=""></label>
+    <form action="" method="post" class="form-contact">
+        {{ form.hidden_tag() }}
 
-        <p><input type="submit" value="Регистрация">
+        {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
+            <p>{{ field.label() }}
+            {% if field.errors %}
+                {{ field(class="invalid") }}
+                {% for e in field.errors %}
+                    {{ e }}
+                {% endfor %}
+            {% else %}
+                {{ field() }}
+            {% endif %}
+        {% endfor %}
+        <p>{{ form.submit() }}
     </form>
+    {#    <form action="/registration" method="post" class="form-content">#}
+    {#        <p><label>Name:<input type="text" name="name" value=""></label>#}
+    {#        <p><label>Email:<input type="text" name="email" value=""></label>#}
+    {#        <p><label>Password:<input type="text" name="psw" value=""></label>#}
+    {#        <p><label>Again password:<input type="text" name="psw2" value=""></label>#}
+    {##}
+    {#        <p><input type="submit" value="Регистрация">#}
+    {#    </form>#}
 {% endblock %}
-{#{% block content %}#}
-{#    <form action="" method="post" novalidate>#}
-{#        <div>#}
-{#            {{ form.csrf_token }}#}
-{#        </div>#}
-{#        {% for field in form if field.name != 'csrf_token' %}#}
-{#            <div>#}
-{#                {{ field.label() }}#}
-{#                {{ field() }}#}
-{#                {% for error in field.errors %}#}
-{#                    <div class="error">{{ error }}</div>#}
-{#                {% endfor %}#}
-{#            </div>#}
-{#        {% endfor %}#}
-{#    </form>#}
-{#{% endblock %}#}

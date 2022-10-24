@@ -9,9 +9,26 @@
     {% for cat, msg in get_flashed_messages(True) %}
         <div class='flash'>{{ msg }}</div>
     {% endfor %}
-    <form action="/login" method="post" class="form-content">
-        <p><label>Email:<input type="text" name="email" value=""></label>
-        <p><label>Password:<input type="text" name="psw" value=""></label>
-        <p><input type="submit" value="Войти">
+    <form action="" method="post" class="form-contact">
+        {{ form.hidden_tag() }}
+
+        {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
+            <p>{{ field.label() }}
+            {% if field.errors %}
+                {{ field(class="invalid") }}
+                {% for e in field.errors %}
+                    {{ e }}
+                {% endfor %}
+            {% else %}
+                {{ field() }}
+            {% endif %}
+        {% endfor %}
+        <p>{{ form.remember.label() }} {{ form.remember() }}
+        <p>{{ form.submit() }}
     </form>
+    {#    <form action="/login" method="post" class="form-content">#}
+    {#        <p><label>Email:<input type="text" name="email" value=""></label>#}
+    {#        <p><label>Password:<input type="text" name="psw" value=""></label>#}
+    {#        <p><input type="submit" value="Войти">#}
+    {#    </form>#}
 {% endblock %}

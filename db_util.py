@@ -27,13 +27,13 @@ class UserLogin(UserMixin):
     def getAvatar(self, app):
         img = None
         if not self.__user['profile']:
-            with app.open_resource(app.root_path + url_for('static', filename='media/default_avatar.png'),
+            with app.open_resource(app.root_path + url_for('static', filename='media/profiles/default_avatar.png'),
                                    'rb') as f:
                 img = f.read()
                 print(img)
         else:
             img = self.__user['profile']
-            with app.open_resource(app.root_path + url_for('static', filename=f'media/{img}'),
+            with app.open_resource(app.root_path + url_for('static', filename=f'media/profiles/{img}'),
                                    'rb') as f:
                 img = f.read()
         return img
@@ -141,7 +141,7 @@ class Database:
         self.con.commit()
         return True
 
-    def deleteUserAvater(self, get_id):
+    def deleteUserAvatar(self, get_id):
         query = f"SELECT profile FROM users WHERE id = '{get_id}'"
         self.cur.execute(query)
         filename = self.prepare_data(self.cur.fetchall())[0]
