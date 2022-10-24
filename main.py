@@ -6,18 +6,24 @@ from forms import RegistrationForm, LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, login_user, current_user, logout_user
 from werkzeug.utils import secure_filename
+from admin.admin import admin
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'inform_project'
 db = Database()
-# Для регистрации пользователя
+
+# Для регистрации и авторизации пользователя
 login_manager = LoginManager(app)
 login_manager.login_view = 'login_page'
 login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
+
 # Для максимального объема хранения данных
 MAX_CONTENT_LENGTH = 1024 * 1024
 UPLOAD_FOLDER = 'static/media/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Для админ панели
+app.register_blueprint(admin, url_prefix='/admin')
 
 
 # Гланвая страница доступна всем пользователям
