@@ -24,20 +24,42 @@
 {% endblock %}
 {% block content %}
     {{ super() }}
-    <hr>
-    <h2>Список статей</h2>
-
-    <ul class="list-posts">
+    <h5 class="start">Market Place</h5>
+    <hr style="    border: none; /* Убираем границу */
+    background-color: #370ff3; /* Цвет линии */
+    color: #403866; /* Цвет линии для IE6-7 */
+    height: 10px; /* Толщина линии */">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for p in products %}
-            <li>
-                <p class="title"><a
-                        href="{{ url_for('detail_product_page', product_id=p.id) }}">{{ p.product_name }}</a></p>
-                <p class="annonce">{{ p.id }}</p>
-            </li>
-            <form action="{{ url_for('main_page_all') }}" method="POST">
-                <button id="button_backet" name="backet_go" value="{{ p.id }}" type="submit">В корзину</button>
-            </form>
+            <div class="col">
+                <div class="card h-100">
+                    <img src="{{ p.image_path }}" class="card-img-top" alt="Карточка">
+                    <div class="card-body">
+                        <a href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                            {{ p.product_name }}
+                        </a>
+                        <p class="card-text">{{ p.text_info[2:15] }}...</p>
+                        <form action="{{ url_for('main_page_all') }}" method="POST">
+                            <button class="btn btn-primary" id="button_backet" name="backet_go" value="{{ p.id }}"
+                                    type="submit">В корзину
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
+    {#    <ul class="list-posts">#}
+    {#        {% for p in products %}#}
+    {#            <li>#}
+    {#                <p class="title"><a#}
+    {#                        href="{{ url_for('detail_product_page', product_id=p.id) }}">{{ p.product_name }}</a></p>#}
+    {#                <p class="annonce">{{ p.id }}</p>#}
+    {#            </li>#}
+    {#            <form action="{{ url_for('main_page_all') }}" method="POST">#}
+    {#                <button id="button_backet" name="backet_go" value="{{ p.id }}" type="submit">В корзину</button>#}
+    {#            </form>#}
+    {#        {% endfor %}#}
+    {#    </ul>#}
     <a href="{{ url_for('admin.index') }}">Админ-панель</a></p>
 {% endblock %}

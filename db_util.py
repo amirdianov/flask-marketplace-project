@@ -60,16 +60,16 @@ class Database:
         # query = f"SELECT id, product_name, text_info FROM products"
 
         if cat and search:
-            query = f"SELECT id, product_name, text_info FROM products where " \
+            query = f"SELECT * FROM products where " \
                     f"category='{cat}' and (product_name LIKE '%{search}%' or text_info LIKE '%{search}%')"
         elif cat:
-            query = f"SELECT id, product_name, text_info FROM products where " \
+            query = f"SELECT * FROM products where " \
                     f"category='{cat}'"
         elif search:
-            query = f"SELECT id, product_name, text_info FROM products where " \
+            query = f"SELECT * FROM products where " \
                     f"(product_name LIKE '%{search}%' or text_info LIKE '%{search}%')"
         else:
-            query = f"SELECT id, product_name, text_info FROM products"
+            query = f"SELECT * FROM products"
 
         self.cur.execute(query)
         res = self.prepare_data(self.cur.fetchall())

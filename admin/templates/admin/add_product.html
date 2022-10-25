@@ -11,7 +11,7 @@
         <div class="flash {{ cat }}">{{ msg }}</div>
     {% endfor %}
     <form method="post" action="{{ url_for('.add_product_page') }}">
-        <p><label>Название статьи:<input type="text" name="name" value=""></label>
+        <p><label>Название статьи:<input type="text" name="name" value="" style="margin-top: 10px"></label>
         <p><label>Текст статьи:<textarea name="post" rows=7 cols=40></textarea></label>
         <p><input type="submit" value="Добавить"/>
     </form>
