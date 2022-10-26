@@ -7,6 +7,7 @@ from flask import url_for
 from psycopg2 import OperationalError
 
 from flask_login import UserMixin
+from werkzeug.security import check_password_hash
 
 
 class UserLogin(UserMixin):
@@ -118,6 +119,20 @@ class Database:
             print('Нет такого')
             return False
         return res
+
+    def getUsersCategory(self, email, password):
+        query = f"SELECT * FROM users WHERE email = '{email}'"
+        self.cur.execute(query)
+        res = self.prepare_data(self.cur.fetchall())[0]
+        print(res)
+        pas = res['password']
+        if not res:
+            print('Нет такого')
+            return False
+        print(pas)
+        if check_password_hash(pas, password):
+            print('СОШЛОСЬ')
+            return res['category']
 
     def addUser(self, email, psw):
         query = f"SELECT COUNT(*) as count FROM users WHERE email LIKE '{email}'"

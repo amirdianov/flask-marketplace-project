@@ -1,4 +1,7 @@
-{% extends 'admin/base.html' %}
+{% extends 'admin/base_admin.html' %}
+{% block nav %}
+    <a class="nav-link active" aria-current="page" href={{ url_for('.login') }}>Войти</a>
+{% endblock %}
 {% block content %}
     {{ super() }}
     <div id="login" class="wnd_dlg_back login_wnd">
@@ -8,7 +11,7 @@
                 <div class="flash {{ cat }}">{{ msg }}</div>
             {% endfor %}
             <form action="" method="post">
-                <p><label class="form-label">Логин:<input type="text" name="user"> </label>
+                <p><label class="form-label">Логин:<input type="email" name="email"> </label>
                 <p><label class="form-label">Пароль:<input type="password" name="password"> </label>
                 <p><input class="login_button" type="submit" value="Войти">
             </form>

@@ -1,4 +1,5 @@
 from flask import Blueprint, request, flash, redirect, url_for, render_template, session
+from werkzeug.security import generate_password_hash
 
 from db_util import Database
 
@@ -23,20 +24,20 @@ def index():
     if not isLogged():
         return redirect(url_for('.login'))
 
-    return render_template('admin/index.html', title='Админ-панель')
+    return redirect(url_for('.all_products_page'))
 
 
-@admin.route('/login', methods=['POST', 'GET'])
+@admin.route('/login_admin', methods=['POST', 'GET'])
 def login():
     if isLogged():
         return redirect(url_for('.index'))
     if request.method == 'POST':
-        if request.form['user'] == 'admin' and request.form['password'] == '12345':
+        if db.getUsersCategory(request.form['email'], request.form['password']) == 1:
             login_admin()
             return redirect(url_for('.index'))
         else:
             flash('Неверные имя или пароль для админки')
-    return render_template('admin/login.html', title='Админ-панель')
+    return render_template('admin/login_admin.html', title='Админ-панель')
 
 
 @admin.route('/logout', methods=['POST', 'GET'])
@@ -45,6 +46,17 @@ def logout():
         return redirect(url_for('.login'))
     logout_admin()
     return redirect(url_for('.login'))
+
+
+@admin.route("/view_product/<int:product_id>", methods=["POST", "GET"])
+def detail_product_page(product_id):
+    product = db.getProductById(product_id)
+    return render_template('view_product.html', product=product)
+
+
+@admin.route("/all_products")
+def all_products_page():
+    return render_template('admin/all_products.html', title='Все продукты')
 
 
 @admin.route("/add_product", methods=["POST", "GET"])
@@ -62,7 +74,11 @@ def add_product_page():
     return render_template('admin/add_product.html', title="Добавление продукта")
 
 
-@admin.route("/view_product/<int:product_id>", methods=["POST", "GET"])
-def detail_product_page(product_id):
-    product = db.getProductById(product_id)
-    return render_template('view_product.html', product=product)
+@admin.route("/all_users")
+def all_users_page():
+    return render_template('admin/all_users.html', title='Все пользователи')
+
+
+@admin.route("/add_user")
+def add_user_page():
+    return render_template('admin/add_user.html', title='Добавить пользователя')

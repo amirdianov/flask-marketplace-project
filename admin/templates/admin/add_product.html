@@ -1,10 +1,4 @@
-{% extends 'base.html' %}
-{% block nav %}
-    <a class="nav-link" aria-current="page" href={{ url_for('main_page_all') }}>Главная страница</a>
-    <a class="nav-link" aria-current="page" href={{ url_for('registration_page') }}>Личный кабинет</a>
-    <a class="nav-link active" aria-current="page" href={{ url_for('registration_page') }}>Добавить продукт</a>
-    <a class="nav-link" href={{ url_for('login_page') }}>Выйти</a>
-{% endblock %}
+{% extends 'admin/base_admin.html' %}
 {% block content %}
     {{ super() }}
     {% for cat, msg in get_flashed_messages(True) %}
