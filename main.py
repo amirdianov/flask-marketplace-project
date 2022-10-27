@@ -70,7 +70,7 @@ def backet():
 @app.route('/registration', methods=['GET', 'POST'])
 def registration_page():
     if current_user.is_authenticated:
-        return redirect(url_for('profile'))
+        return redirect(url_for('profile_page'))
     form = RegistrationForm()
     if form.validate_on_submit():
         session.pop('_flashes', None)
@@ -90,7 +90,7 @@ def login_page():
     # заглушка, чтобы нельзя было перейти по данному адресу пользователю
     # который уже зарегистрирован
     if current_user.is_authenticated:
-        return redirect(url_for('profile'))
+        return redirect(url_for('profile_page'))
     form = LoginForm()
     if form.validate_on_submit():
         user = db.getUserByEmail(form.email.data)

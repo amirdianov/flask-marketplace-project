@@ -74,7 +74,7 @@ body {
     flex-wrap: wrap;
 }
 
-.login100-form-title{
+.login100-form-title {
     font-family: Ubuntu-Bold, serif;
     font-size: 30px;
     color: #403866;
@@ -156,7 +156,7 @@ body {
     transition: all .4s;
 }
 
-.start{
+.start {
     font-family: Ubuntu-Bold, serif;
     font-size: 30px;
     color: #403866;
@@ -165,4 +165,16 @@ body {
     text-align: center;
     width: 100%;
     display: block;
+}
+
+.button-saved {
+    border-color: #403286;
+    color: #fff;
+    box-shadow: 0 0 40px 40px #403286 inset, 0 0 0 0 #403286;
+    -webkit-transition: all 150ms ease-in-out;
+    transition: all 150ms ease-in-out;
+}
+
+.button-saved:hover {
+    box-shadow: 0 0 10px 0 #403286 inset, 0 0 10px 4px #403286;
 }

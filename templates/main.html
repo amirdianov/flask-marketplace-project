@@ -33,33 +33,36 @@
         {% for p in products %}
             <div class="col">
                 <div class="card h-100">
-                    <img src="{{ p.image_path }}" class="card-img-top" alt="Карточка">
+                    <a class="text-muted" href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                        <img src="{{ p.image_path }}" class="card-img-top" alt="Карточка">
+                    </a>
                     <div class="card-body">
-                        <a href="{{ url_for('detail_product_page', product_id=p.id) }}">
-                            {{ p.product_name }}
+                        <h5><a href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                            {{ p.product_name }}                         </a>
+                            <hr>
+                            Цена - {{ p.price }}р
+                        </h5>
                         </a>
-                        <p class="card-text">{{ p.text_info[2:15] }}...</p>
-                        <form action="{{ url_for('main_page_all') }}" method="POST">
-                            <button class="btn btn-primary" id="button_backet" name="backet_go" value="{{ p.id }}"
-                                    type="submit">В корзину
-                            </button>
-                        </form>
+                        <p class="card-text">{{ p.text_info[0:200] }}...</p>
+                        <div class="buttons">
+                            <form action="{{ url_for('main_page_all') }}" method="POST">
+                                <button class="btn btn-primary" id="button_backet" name="backet_go" value="{{ p.id }}"
+                                        type="submit">В корзину
+                                </button>
+                            </form>
+                            <form action="{{ url_for('main_page_all') }}" method="POST">
+                                <button type="submit" id="button_saved" name="saved"
+                                        class="btn btn-outline-info button-saved" style="margin-top: 5px">В избранное
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
-    {#    <ul class="list-posts">#}
-    {#        {% for p in products %}#}
-    {#            <li>#}
-    {#                <p class="title"><a#}
-    {#                        href="{{ url_for('detail_product_page', product_id=p.id) }}">{{ p.product_name }}</a></p>#}
-    {#                <p class="annonce">{{ p.id }}</p>#}
-    {#            </li>#}
-    {#            <form action="{{ url_for('main_page_all') }}" method="POST">#}
-    {#                <button id="button_backet" name="backet_go" value="{{ p.id }}" type="submit">В корзину</button>#}
-    {#            </form>#}
-    {#        {% endfor %}#}
-    {#    </ul>#}
-    <a href="{{ url_for('admin.index') }}">Админ-панель</a></p>
+    <div class="d-grid gap-2" style="margin-top: 10px">
+        <a class="btn btn-outline-dark" href="{{ url_for('admin.index') }}" role="button">Админ-панель</a>
+    </div>
+    {#    <a href="{{ url_for('admin.index') }}">Админ-панель</a></p>#}
 {% endblock %}

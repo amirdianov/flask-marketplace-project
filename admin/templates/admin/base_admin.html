@@ -14,7 +14,7 @@
         <div class="container-fluid">
             <img src="/static/css/backet.png" alt="" width="25" height="25" style="margin-right: 5px"
                  class="d-inline-block align-text-top">
-            <a class="navbar-brand" href="#">MarketPlace</a>
+            <a class="navbar-brand" href="{{ url_for("main_page_all") }}">MarketPlace</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -30,7 +30,7 @@
                             пользователи</a>
                         <a class="nav-link" aria-current="page" href={{ url_for('.add_user_page') }}>Добавить
                             пользователя</a>
-                        <a class="nav-link" aria-current="page" href={{ url_for('main_page_all') }}>Выйти из админки
+                        <a class="nav-link" aria-current="page" href={{ url_for('.logout') }}>Выйти из админки
                             </a>
                     {% endblock %}
                 </div>
