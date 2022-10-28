@@ -51,16 +51,46 @@ def check_product_in_backet():
 
 
 def add_product_backet(product_id):
-    session['backet'] += [{'product_id': product_id}]
-    print(session['backet'])
+    ans = db.getProductById(product_id)
+    flag = False
+    for product in session['backet']:
+        if product['product_name'] == ans['product_name']:
+            product['count'] += 1
+            flag = True
+            session.modified = True
+    if not flag:
+        ans['count'] = 1
+        session['backet'] += [ans]
 
 
 def delete_backet():
     session.pop('backet', None)
 
 
+def change_plus_backet(product_id):
+    ans = db.getProductById(product_id)
+    for product in session['backet']:
+        if product['product_name'] == ans['product_name']:
+            product['count'] += 1
+            session.modified = True
+
+
+def change_minus_backet(product_id):
+    ans = db.getProductById(product_id)
+    for product in session['backet']:
+        if product['product_name'] == ans['product_name']:
+            product['count'] -= 1
+            session.modified = True
+
+
 @app.route('/backet', methods=['GET', 'POST'])
 def backet():
+    if request.method == 'POST':
+        if request.form.get('button_plus'):
+            change_plus_backet(request.form.get('button_plus'))
+        elif request.form.get('button_minus'):
+            change_minus_backet(request.form.get('button_minus'))
+
     print(session['backet'])
     return render_template('backet.html', products=session['backet'])
 

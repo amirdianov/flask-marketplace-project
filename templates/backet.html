@@ -7,7 +7,16 @@
     <a class="nav-link" href={{ url_for('logout') }}>Выйти</a>
 {% endblock %}
 {% block content %}
-    {% for i in products %}
-        <p>{{ i }}</p>
-    {% endfor %}
+    <ol>
+        {% for i in products %}
+            <li><p>{{ i.product_name }} - {{ i.price }}</p>
+                <form method="post" action="">
+                    <button class="button-backet" name="button_plus" value="{{ i.id }}">+</button>
+                    <button class="button-backet" name="button_minus" value="{{ i.id }}">-</button>
+                    <b>{{ i.count }}</b>
+                </form>
+            </li>
+
+        {% endfor %}
+    </ol>
 {% endblock %}

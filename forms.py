@@ -25,3 +25,4 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField("Again password: ",
                               validators=[DataRequired(), EqualTo('password', message="Пароли не совпадают")])
     submit = SubmitField('Sign up')
+
