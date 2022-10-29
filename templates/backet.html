@@ -3,20 +3,73 @@
     <a class="nav-link" aria-current="page" href={{ url_for('main_page_all') }}>Главная
         страница</a>
     <a class="nav-link " href={{ url_for('profile_page') }}>Личный кабинет</a>
-    <a class="nav-link active" href={{ url_for('backet') }}>Корзина</a>
+    {% if backet %}
+        {% block backet_nav %}
+            <a class="nav-link" href={{ url_for('backet') }}>Корзина</a>
+        {% endblock %}
+    {% endif %}
+
     <a class="nav-link" href={{ url_for('logout') }}>Выйти</a>
 {% endblock %}
 {% block content %}
-    <ol>
-        {% for i in products %}
-            <li><p>{{ i.product_name }} - {{ i.price }}</p>
-                <form method="post" action="">
-                    <button class="button-backet" name="button_plus" value="{{ i.id }}">+</button>
-                    <button class="button-backet" name="button_minus" value="{{ i.id }}">-</button>
-                    <b>{{ i.count }}</b>
-                </form>
-            </li>
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+    {% endfor %}
+    <br>
+    <table style="width: 100%">
+        <tr>
+            <td>
+                <div style="border: 5px groove #7c6ec5;">
+                    <br>
+                    <ol>
+                        {% for i in products %}
+                            <li>
+                                <p>{{ i.product_name }} - <b>{{ i.price }}р</b> <img src="{{ i.image_path }}"
+                                                                                     height="70"
+                                                                                     width="90">
+                                </p>
+                                <form method="post" action="">
+                                    <button class="button-backet" name="button_plus" value="{{ i.id }}">+</button>
+                                    <button class="button-backet" name="button_minus" value="{{ i.id }}">-</button>
+                                    <b>{{ i.count }}шт</b>
+                                    <br>
+                                    <hr style="width: 70%">
+                                    <b>Цена: {{ i.price * i.count }}р </b>
+                                    <hr style="width: 70%;   border: 3px groove #7a52c9;">
 
-        {% endfor %}
-    </ol>
+                                </form>
+                            </li>
+                            <form method="post" action="">
+
+                                <button>Удалить из корзины</button>
+                            </form>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </td>
+            <td>
+                <form action="" method="post">
+                    {{ form.hidden_tag() }}
+                    <div class="wrap">
+                        <div class="d-flex flex-column align-items-center justify-content-center">
+                            <div class="d-flex flex-column align-items-center justify-content-center cont-form">
+                                {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
+                                    <div>{{ field.label(class="form-label") }}</div>
+                                    {% if field.errors %}
+                                        {{ field(class="form-control invalid") }}
+                                        {% for e in field.errors %}
+                                            {{ e }}
+                                        {% endfor %}
+                                    {% else %}
+                                        <div>{{ field(class="form-control-login") }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                                <button name="order" value="">Оформить заказ</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </td>
+        </tr>
+    </table>
 {% endblock %}

@@ -1,4 +1,15 @@
 {% extends 'base.html' %}
+{% block nav %}
+    <a class="nav-link active" aria-current="page" href={{ url_for('main_page_all') }}>Главная
+        страница</a>
+    <a class="nav-link" href={{ url_for('profile_page') }}>Личный кабинет</a>
+    {% if backet %}
+        {% block backet_nav %}
+            <a class="nav-link" href={{ url_for('backet') }}>Корзина</a>
+        {% endblock %}
+    {% endif %}
+    <a class="nav-link" href={{ url_for('logout') }}>Выйти</a>
+{% endblock %}
 {% block form %}
     {{ super() }}
     <form class="d-flex" action="/" method="get">
@@ -24,6 +35,9 @@
 {% endblock %}
 {% block content %}
     {{ super() }}
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+    {% endfor %}
     <h5 class="start">Market Place</h5>
     <hr style="    border: none; /* Убираем границу */
     background-color: #370ff3; /* Цвет линии */
@@ -44,18 +58,22 @@
                         </h5>
                         </a>
                         <p class="card-text">{{ p.text_info[0:200] }}...</p>
-                        <div class="buttons">
-                            <form action="{{ url_for('main_page_all') }}" method="POST">
-                                <button class="btn btn-primary" id="button_backet" name="backet_go" value="{{ p.id }}"
-                                        type="submit">В корзину
-                                </button>
-                            </form>
-                            <form action="{{ url_for('main_page_all') }}" method="POST">
-                                <button type="submit" id="button_saved" name="saved"
-                                        class="btn btn-outline-info button-saved" style="margin-top: 5px">В избранное
-                                </button>
-                            </form>
-                        </div>
+                        {% if  current_user.is_authenticated %}
+                            <div class="buttons">
+                                <form action="{{ url_for('main_page_all') }}" method="POST">
+                                    <button class="btn btn-primary" id="button_backet" name="backet_go"
+                                            value="{{ p.id }}"
+                                            type="submit">В корзину
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('main_page_all') }}" method="POST">
+                                    <button type="submit" id="button_saved" name="saved"
+                                            class="btn btn-outline-info button-saved" style="margin-top: 5px">В
+                                        избранное
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template, request, url_for, redirect, make_response, session, flash
 from db_util import Database, UserLogin
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, MakeOrder
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, login_user, current_user, logout_user
 from werkzeug.utils import secure_filename
@@ -36,17 +36,24 @@ def main_page_all():
               'category_selected_id': int(cat) if cat else None,
               'search': search if search else ''}
     if request.method == 'POST':
-        # delete_backet()
         add_product_backet(request.form['backet_go'])
+    backet_flag = None
+    if check_backet():
+        print(len(session['backet']))
 
-    return render_template('main.html', **params)
+        if len(session['backet']):
+            backet_flag = True
+        else:
+            backet_flag = False
+    return render_template('main.html', **params, backet=backet_flag)
 
 
 def make_products_backet():
     session['backet'] = []
+    session.modified = True
 
 
-def check_product_in_backet():
+def check_backet():
     return True if 'backet' in session.keys() else False
 
 
@@ -80,19 +87,31 @@ def change_minus_backet(product_id):
     for product in session['backet']:
         if product['product_name'] == ans['product_name']:
             product['count'] -= 1
+            if product['count'] == 0:
+                session['backet'].remove(product)
             session.modified = True
+            flash("Товар удален", "success")
+    if len(session['backet']) < 0:
+        delete_backet()
 
 
 @app.route('/backet', methods=['GET', 'POST'])
 def backet():
+    form = MakeOrder()
     if request.method == 'POST':
         if request.form.get('button_plus'):
             change_plus_backet(request.form.get('button_plus'))
         elif request.form.get('button_minus'):
             change_minus_backet(request.form.get('button_minus'))
-
+    backet_flag = None
     print(session['backet'])
-    return render_template('backet.html', products=session['backet'])
+    if len(session['backet']):
+        backet_flag = True
+    else:
+        flash("Корзина пуста", "error")
+
+        return redirect(url_for('main_page_all'))
+    return render_template('backet.html', products=session['backet'], form=form, backet=backet_flag)
 
 
 # Страница регистрации, если пользователь успешно регистрируется,
@@ -148,7 +167,7 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile_page():
-    return render_template('profile.html')
+    return render_template('profile.html', backet=True if len(session['backet']) != 0 else False)
 
 
 @app.route('/userava')

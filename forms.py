@@ -26,3 +26,8 @@ class RegistrationForm(FlaskForm):
                               validators=[DataRequired(), EqualTo('password', message="Пароли не совпадают")])
     submit = SubmitField('Sign up')
 
+
+class MakeOrder(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=1, max=100,
+                                                                  message="Имя должно содержать не менее одного символа")])
+    address = StringField('Address', validators=[DataRequired()])
