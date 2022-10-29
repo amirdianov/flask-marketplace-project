@@ -5,7 +5,7 @@
     <a class="nav-link " href={{ url_for('profile_page') }}>Личный кабинет</a>
     {% if backet %}
         {% block backet_nav %}
-            <a class="nav-link" href={{ url_for('backet') }}>Корзина</a>
+            <a class="nav-link active" href={{ url_for('backet') }}>Корзина</a>
         {% endblock %}
     {% endif %}
 
@@ -40,8 +40,7 @@
                                 </form>
                             </li>
                             <form method="post" action="">
-
-                                <button>Удалить из корзины</button>
+                                <button class="button-backet" name="button_delete" value="{{ i.id }}">Удалить из корзины</button>
                             </form>
                         {% endfor %}
                     </ol>

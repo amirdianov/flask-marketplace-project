@@ -2,13 +2,18 @@
 {% block nav %}
     <a class="nav-link active" aria-current="page" href={{ url_for('main_page_all') }}>Главная
         страница</a>
-    <a class="nav-link" href={{ url_for('profile_page') }}>Личный кабинет</a>
-    {% if backet %}
-        {% block backet_nav %}
-            <a class="nav-link" href={{ url_for('backet') }}>Корзина</a>
-        {% endblock %}
+    {% if  current_user.is_authenticated %}
+        <a class="nav-link" href={{ url_for('profile_page') }}>Личный кабинет</a>
+        {% if backet %}
+            {% block backet_nav %}
+                <a class="nav-link" href={{ url_for('backet') }}>Корзина</a>
+            {% endblock %}
+        {% endif %}
+        <a class="nav-link" href={{ url_for('logout') }}>Выйти</a>
+    {% else %}
+        <a class="nav-link" aria-current="page" href={{ url_for('registration_page') }}>Зарегистрироваться</a>
+        <a class="nav-link" href={{ url_for('login_page') }}>Войти</a>
     {% endif %}
-    <a class="nav-link" href={{ url_for('logout') }}>Выйти</a>
 {% endblock %}
 {% block form %}
     {{ super() }}

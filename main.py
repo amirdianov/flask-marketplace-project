@@ -95,6 +95,17 @@ def change_minus_backet(product_id):
         delete_backet()
 
 
+def delete_product_backet(product_id):
+    ans = db.getProductById(product_id)
+    for product in session['backet']:
+        if product['product_name'] == ans['product_name']:
+            session['backet'].remove(product)
+            session.modified = True
+            flash("Товар удален", "success")
+    if len(session['backet']) < 0:
+        delete_backet()
+
+
 @app.route('/backet', methods=['GET', 'POST'])
 def backet():
     form = MakeOrder()
@@ -103,6 +114,8 @@ def backet():
             change_plus_backet(request.form.get('button_plus'))
         elif request.form.get('button_minus'):
             change_minus_backet(request.form.get('button_minus'))
+        elif request.form.get('button_delete'):
+            delete_product_backet(request.form.get('button_delete'))
     backet_flag = None
     print(session['backet'])
     if len(session['backet']):
