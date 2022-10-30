@@ -36,11 +36,12 @@ def main_page_all():
               'category_selected_id': int(cat) if cat else None,
               'search': search if search else ''}
     if request.method == 'POST':
-        add_product_backet(request.form['backet_go'])
+        if check_count_product(request.form['backet_go']):
+            add_product_backet(request.form['backet_go'])
+        else:
+            pass
     backet_flag = None
     if check_backet():
-        print(len(session['backet']))
-
         if len(session['backet']):
             backet_flag = True
         else:
@@ -48,15 +49,29 @@ def main_page_all():
     return render_template('main.html', **params, backet=backet_flag)
 
 
+# Создает корзину, при добавлении первого товара
 def make_products_backet():
     session['backet'] = []
     session.modified = True
 
 
+# Проверяет, создана ли корзина
 def check_backet():
     return True if 'backet' in session.keys() else False
 
 
+def check_count_product(product_id):
+    ans = db.getProductById(product_id)
+    for product in session['backet']:
+        if product['product_name'] == ans['product_name']:
+            if product['count'] + 1 > ans['count_product']:
+                flash('Больше таких товаров нет на складе', 'error')
+                return False
+            else:
+                return True
+    return True
+
+# Добавляет продукт в корзину
 def add_product_backet(product_id):
     ans = db.getProductById(product_id)
     flag = False
@@ -70,18 +85,24 @@ def add_product_backet(product_id):
         session['backet'] += [ans]
 
 
+# Удаляет корзину
 def delete_backet():
     session.pop('backet', None)
 
 
+# Увеличение количества продуктов +
 def change_plus_backet(product_id):
     ans = db.getProductById(product_id)
     for product in session['backet']:
         if product['product_name'] == ans['product_name']:
-            product['count'] += 1
-            session.modified = True
+            if product['count'] + 1 > ans['count_product']:
+                flash('Больше таких товаров нет на складе', 'error')
+            else:
+                product['count'] += 1
+                session.modified = True
 
 
+# Уменьшение количества продуктов -
 def change_minus_backet(product_id):
     ans = db.getProductById(product_id)
     for product in session['backet']:
@@ -90,11 +111,11 @@ def change_minus_backet(product_id):
             if product['count'] == 0:
                 session['backet'].remove(product)
             session.modified = True
-            flash("Товар удален", "success")
     if len(session['backet']) < 0:
         delete_backet()
 
 
+# Удаление продукта из корзины
 def delete_product_backet(product_id):
     ans = db.getProductById(product_id)
     for product in session['backet']:
@@ -106,7 +127,9 @@ def delete_product_backet(product_id):
         delete_backet()
 
 
+# Корзина
 @app.route('/backet', methods=['GET', 'POST'])
+@login_required
 def backet():
     form = MakeOrder()
     if request.method == 'POST':
@@ -116,13 +139,11 @@ def backet():
             change_minus_backet(request.form.get('button_minus'))
         elif request.form.get('button_delete'):
             delete_product_backet(request.form.get('button_delete'))
-    backet_flag = None
-    print(session['backet'])
     if len(session['backet']):
         backet_flag = True
     else:
+        backet_flag = False
         flash("Корзина пуста", "error")
-
         return redirect(url_for('main_page_all'))
     return render_template('backet.html', products=session['backet'], form=form, backet=backet_flag)
 
@@ -176,6 +197,12 @@ def logout():
     return redirect(url_for('login_page'))
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    print("load_user")
+    return UserLogin().fromDB(user_id, db)
+
+
 # Страница профиля зарегистрированного пользователя
 @app.route('/profile')
 @login_required
@@ -183,6 +210,7 @@ def profile_page():
     return render_template('profile.html', backet=True if len(session['backet']) != 0 else False)
 
 
+# Получает фото в формате png - толькоё
 @app.route('/userava')
 @login_required
 def userava():
@@ -216,16 +244,11 @@ def upload_avatar():
     return redirect(url_for('profile_page'))
 
 
+# Просмотр товара - вьюшка для товара
 @app.route("/view_product/<int:product_id>", methods=["POST", "GET"])
 def detail_product_page(product_id):
     product = db.getProductById(product_id)
     return render_template('view_product.html', product=product)
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    print("load_user")
-    return UserLogin().fromDB(user_id, db)
 
 
 @app.errorhandler(404)

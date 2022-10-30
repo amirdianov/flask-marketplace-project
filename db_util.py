@@ -62,15 +62,15 @@ class Database:
 
         if cat and search:
             query = f"SELECT * FROM products where " \
-                    f"category='{cat}' and (product_name LIKE '%{search}%' or text_info LIKE '%{search}%')"
+                    f"category='{cat}' and count_product > 0 and (product_name LIKE '%{search}%' or text_info LIKE '%{search}%' order by id asc)"
         elif cat:
             query = f"SELECT * FROM products where " \
-                    f"category='{cat}'"
+                    f"category='{cat}'and count_product > 0 order by id asc"
         elif search:
-            query = f"SELECT * FROM products where " \
-                    f"(product_name LIKE '%{search}%' or text_info LIKE '%{search}%')"
+            query = f"SELECT * FROM products where count_product > 0  and " \
+                    f"(product_name LIKE '%{search}%' or text_info LIKE '%{search}%') order by id asc"
         else:
-            query = f"SELECT * FROM products"
+            query = f"SELECT * FROM products where count_product > 0 order by id asc"
 
         self.cur.execute(query)
         res = self.prepare_data(self.cur.fetchall())
