@@ -1,5 +1,7 @@
+import datetime
 import math
 import os
+import random
 import time
 
 import psycopg2
@@ -162,6 +164,35 @@ class Database:
         filename = self.prepare_data(self.cur.fetchall())[0]
         if filename['profile']:
             return filename['profile']
+
+    def makeOrder(self, user_id, products, address):
+        now = datetime.datetime.now()
+        id_products = []
+        sum_products = 0
+        number = random.randint(10000, 99999)
+        for product in products:
+            id_products.append(product['id'])
+            sum_products = sum_products + product['count'] * product['price']
+        query = f"INSERT INTO orders (user_id, sum_products, time_now, address, number_order) " \
+                f"VALUES ('{user_id}', '{sum_products}', '{now}', '{address}', '{number}')"
+        self.cur.execute(query)
+        self.con.commit()
+        query_again = f"SELECT id FROM orders WHERE number_order = '{number}'"
+        self.cur.execute(query_again)
+        order_id = self.prepare_data(self.cur.fetchall())[0]['id']
+        print(order_id)
+        for product in products:
+            query = f"INSERT INTO products_ordered (order_id, product_id, count_product) " \
+                    f"VALUES ('{order_id}', '{product['id']}', '{product['count']}')"
+            self.cur.execute(query)
+            self.con.commit()
+        for product in products:
+            query = f"SELECT count_product from products where id = '{product['id']}'"
+            self.cur.execute(query)
+            count = self.prepare_data(self.cur.fetchall())[0]['count_product']
+            query = f"UPDATE products SET count_product = '{count - product['count']}' where id = '{product['id']}'"
+            self.cur.execute(query)
+            self.con.commit()
 
     def prepare_data(self, data):
         products = []

@@ -36,10 +36,10 @@ def main_page_all():
               'category_selected_id': int(cat) if cat else None,
               'search': search if search else ''}
     if request.method == 'POST':
+        if not check_backet():
+            make_products_backet()
         if check_count_product(request.form['backet_go']):
             add_product_backet(request.form['backet_go'])
-        else:
-            pass
     backet_flag = None
     if check_backet():
         if len(session['backet']):
@@ -60,6 +60,7 @@ def check_backet():
     return True if 'backet' in session.keys() else False
 
 
+# Проверяет можно ли добавить продукт по кнопке (в корзину с главной странцы)
 def check_count_product(product_id):
     ans = db.getProductById(product_id)
     for product in session['backet']:
@@ -70,6 +71,7 @@ def check_count_product(product_id):
             else:
                 return True
     return True
+
 
 # Добавляет продукт в корзину
 def add_product_backet(product_id):
@@ -139,6 +141,11 @@ def backet():
             change_minus_backet(request.form.get('button_minus'))
         elif request.form.get('button_delete'):
             delete_product_backet(request.form.get('button_delete'))
+        elif request.form.get('order'):
+            db.makeOrder(current_user.get_id(), session['backet'], request.form.get('address'))
+            delete_backet()
+            flash('Заказ успешно создан', 'success')
+            return redirect(url_for('main_page_all'))
     if len(session['backet']):
         backet_flag = True
     else:
@@ -181,7 +188,6 @@ def login_page():
             userlogin = UserLogin().create(user)
             rm = form.remember.data
             login_user(userlogin, remember=rm)
-            make_products_backet()
             return redirect(request.args.get("next") or url_for("profile_page"))
         else:
             flash("Неверная пара логин/пароль", "error")
@@ -207,7 +213,13 @@ def load_user(user_id):
 @app.route('/profile')
 @login_required
 def profile_page():
-    return render_template('profile.html', backet=True if len(session['backet']) != 0 else False)
+    backet_flag = None
+    if check_backet():
+        if len(session['backet']):
+            backet_flag = True
+        else:
+            backet_flag = False
+    return render_template('profile.html', backet=backet_flag)
 
 
 # Получает фото в формате png - толькоё

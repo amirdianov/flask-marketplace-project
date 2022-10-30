@@ -40,7 +40,9 @@
                                 </form>
                             </li>
                             <form method="post" action="">
-                                <button class="button-backet" name="button_delete" value="{{ i.id }}">Удалить из корзины</button>
+                                <button class="button-backet" name="button_delete" value="{{ i.id }}">Удалить из
+                                    корзины
+                                </button>
                             </form>
                         {% endfor %}
                     </ol>
@@ -60,10 +62,14 @@
                                             {{ e }}
                                         {% endfor %}
                                     {% else %}
-                                        <div>{{ field(class="form-control-login") }}</div>
+                                        {% if field.label != 'Address' %}
+                                            <div>{{ field(class="form-control-login") }}</div>
+                                        {% else %}
+                                            <div>{{ field(class="form-control-login", name='address') }}</div>
+                                        {% endif %}
                                     {% endif %}
                                 {% endfor %}
-                                <button name="order" value="">Оформить заказ</button>
+                                <button class="button-backet" name="order" value="Оформление заказа">Оформить заказ</button>
                             </div>
                         </div>
                     </div>
