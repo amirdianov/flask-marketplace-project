@@ -29,6 +29,7 @@ app.register_blueprint(admin, url_prefix='/admin')
 # Главная страница доступна всем пользователям
 @app.route('/', methods=['GET', 'POST'])
 def main_page_all():
+    # delete_saved()
     cat = request.args.get('category')
     search = request.args.get('search')
     params = {'products': db.getProducts(cat, search),
@@ -36,12 +37,18 @@ def main_page_all():
               'category_selected_id': int(cat) if cat else None,
               'search': search if search else ''}
     if request.method == 'POST':
-        if not check_backet():
-            make_products_backet()
-        if check_count_product(request.form['backet_go']):
-            add_product_backet(request.form['backet_go'])
+        print(request.form)
+        if request.form.get('backet_go'):
+            if not check_session('backet'):
+                make_session('backet')
+            if check_count_product(request.form['backet_go']):
+                add_product_session('backet', request.form['backet_go'])
+        elif request.form.get('saved_go'):
+            if not check_session('saved'):
+                make_session('saved')
+            add_product_session('saved', request.form['saved_go'])
     backet_flag = None
-    if check_backet():
+    if check_session('backet'):
         if len(session['backet']):
             backet_flag = True
         else:
@@ -49,15 +56,15 @@ def main_page_all():
     return render_template('main.html', **params, backet=backet_flag)
 
 
-# Создает корзину, при добавлении первого товара
-def make_products_backet():
-    session['backet'] = []
+# Создает корзину (избранное), при добавлении первого товара
+def make_session(name):
+    session[name] = []
     session.modified = True
 
 
-# Проверяет, создана ли корзина
-def check_backet():
-    return True if 'backet' in session.keys() else False
+# Проверяет, создана ли корзина (избранное)
+def check_session(name):
+    return True if f'{name}' in session.keys() else False
 
 
 # Проверяет можно ли добавить продукт по кнопке (в корзину с главной странцы)
@@ -74,22 +81,36 @@ def check_count_product(product_id):
 
 
 # Добавляет продукт в корзину
-def add_product_backet(product_id):
+def add_product_session(name, product_id):
     ans = db.getProductById(product_id)
     flag = False
-    for product in session['backet']:
-        if product['product_name'] == ans['product_name']:
-            product['count'] += 1
-            flag = True
-            session.modified = True
-    if not flag:
-        ans['count'] = 1
-        session['backet'] += [ans]
+    if name == 'backet':
+        for product in session['backet']:
+            if product['product_name'] == ans['product_name']:
+                product['count'] += 1
+                flag = True
+                session.modified = True
+        if not flag:
+            ans['count'] = 1
+            session['backet'] += [ans]
+    elif name == 'saved':
+        for product in session['saved']:
+            if product['product_name'] == ans['product_name']:
+                flash('Такой товар уже есть в избранном', 'error')
+                return
+        session['saved'] += [ans]
+        session.modified = True
+
+        flash('Товар успешно добавлен в избранное', 'success')
 
 
 # Удаляет корзину
 def delete_backet():
     session.pop('backet', None)
+
+
+def delete_saved():
+    session.pop('saved', None)
 
 
 # Увеличение количества продуктов +
@@ -146,13 +167,39 @@ def backet():
             delete_backet()
             flash('Заказ успешно создан', 'success')
             return redirect(url_for('main_page_all'))
-    if len(session['backet']):
-        backet_flag = True
+    if check_session('backet'):
+        if len(session['backet']):
+            backet_flag = True
+        else:
+            backet_flag = False
+            flash("Корзина пуста", "error")
+            return redirect(url_for('main_page_all'))
     else:
-        backet_flag = False
         flash("Корзина пуста", "error")
         return redirect(url_for('main_page_all'))
     return render_template('backet.html', products=session['backet'], form=form, backet=backet_flag)
+
+
+@app.route("/saved", methods=["POST", "GET"])
+def saved_page():
+    if check_session('backet'):
+        if len(session['backet']):
+            backet_flag = True
+        else:
+            backet_flag = False
+    else:
+        backet_flag = False
+    if check_session('saved'):
+        if len(session['saved']):
+            backet_flag = True
+        else:
+            backet_flag = False
+            flash("Избранное пусто 1", "error")
+            return redirect(url_for('main_page_all'))
+    else:
+        flash("Избранное пусто 2", "error")
+        return redirect(url_for('main_page_all'))
+    return render_template('saved.html', products=session['saved'], backet=backet_flag)
 
 
 # Страница регистрации, если пользователь успешно регистрируется,
@@ -228,7 +275,7 @@ def profile_page():
         else:
             flash("Ошибка при добавлении в БД", "error")
     backet_flag = None
-    if check_backet():
+    if check_session('backet'):
         if len(session['backet']):
             backet_flag = True
         else:
@@ -277,17 +324,12 @@ def upload_avatar():
 def detail_product_page(product_id):
     product = db.getProductById(product_id)
     backet_flag = None
-    if check_backet():
+    if check_session('backet'):
         if len(session['backet']):
             backet_flag = True
         else:
             backet_flag = False
     return render_template('view_product.html', product=product, backet=backet_flag)
-
-
-@app.route("/saved", methods=["POST", "GET"])
-def saved_page():
-    pass
 
 
 @app.route("/orders", methods=["POST", "GET"])
