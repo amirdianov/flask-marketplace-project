@@ -31,3 +31,11 @@ class MakeOrder(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(min=1, max=100,
                                                                   message="Имя должно содержать не менее одного символа")])
     address = StringField('Address', validators=[DataRequired()])
+
+
+class ProfileForm(FlaskForm):
+    email = StringField('Email: ', validators=[DataRequired(), Email("Некорректный email")])
+    password = PasswordField('Password: ')
+    password2 = PasswordField("Again password: ",
+                              validators=[EqualTo('password', message="Пароли не совпадают")])
+    submit = SubmitField('Edit')

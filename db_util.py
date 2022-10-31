@@ -151,6 +151,14 @@ class Database:
         self.con.commit()
         return True
 
+    def editUser(self, user_id, email, psw=None):
+        query = f"UPDATE users SET email = '{email}' where id = '{user_id}';"
+        if psw:
+            query += f"UPDATE users SET password = '{psw}' where id = '{user_id}';"
+        self.cur.execute(query)
+        self.con.commit()
+        return True
+
     def updateUserAvatar(self, avatar, user_id):
         if not avatar:
             return False

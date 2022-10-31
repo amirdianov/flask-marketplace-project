@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template, request, url_for, redirect, make_response, session, flash
 from db_util import Database, UserLogin
-from forms import RegistrationForm, LoginForm, MakeOrder
+from forms import RegistrationForm, LoginForm, MakeOrder, ProfileForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, login_user, current_user, logout_user
 from werkzeug.utils import secure_filename
@@ -210,16 +210,32 @@ def load_user(user_id):
 
 
 # Страница профиля зарегистрированного пользователя
-@app.route('/profile')
+@app.route('/profile', methods=["POST", "GET"])
 @login_required
 def profile_page():
+    form = ProfileForm()
+    if form.validate_on_submit():
+        session.pop('_flashes', None)
+        if form.password.data:
+            hash = generate_password_hash(form.password.data)
+            res = db.editUser(current_user.get_id(), form.email.data, hash)
+        else:
+            res = db.editUser(current_user.get_id(), form.email.data)
+
+        if res:
+            flash("Изменения сохранены", "success")
+            return redirect(url_for('login_page'))
+        else:
+            flash("Ошибка при добавлении в БД", "error")
     backet_flag = None
     if check_backet():
         if len(session['backet']):
             backet_flag = True
         else:
             backet_flag = False
-    return render_template('profile.html', backet=backet_flag)
+    context = db.getUser(current_user.get_id())
+    context['password'] = ''
+    return render_template('profile.html', backet=backet_flag, data=context, form=form)
 
 
 # Получает фото в формате png - толькоё
@@ -260,7 +276,13 @@ def upload_avatar():
 @app.route("/view_product/<int:product_id>", methods=["POST", "GET"])
 def detail_product_page(product_id):
     product = db.getProductById(product_id)
-    return render_template('view_product.html', product=product)
+    backet_flag = None
+    if check_backet():
+        if len(session['backet']):
+            backet_flag = True
+        else:
+            backet_flag = False
+    return render_template('view_product.html', product=product, backet=backet_flag)
 
 
 @app.errorhandler(404)
