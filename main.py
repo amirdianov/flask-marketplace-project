@@ -285,6 +285,16 @@ def detail_product_page(product_id):
     return render_template('view_product.html', product=product, backet=backet_flag)
 
 
+@app.route("/saved", methods=["POST", "GET"])
+def saved_page():
+    pass
+
+
+@app.route("/orders", methods=["POST", "GET"])
+def orders_page():
+    pass
+
+
 @app.errorhandler(404)
 def pageNotFount(error):
     return render_template('page404.html', title="Страница не найдена")
