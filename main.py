@@ -30,6 +30,12 @@ app.register_blueprint(admin, url_prefix='/admin')
 @app.route('/', methods=['GET', 'POST'])
 def main_page_all():
     # delete_saved()
+    backet_flag = None
+    if check_session('backet'):
+        if len(session['backet']):
+            backet_flag = True
+        else:
+            backet_flag = False
     cat = request.args.get('category')
     search = request.args.get('search')
     params = {'products': db.getProducts(cat, search),
@@ -47,12 +53,7 @@ def main_page_all():
             if not check_session('saved'):
                 make_session('saved')
             add_product_session('saved', request.form['saved_go'])
-    backet_flag = None
-    if check_session('backet'):
-        if len(session['backet']):
-            backet_flag = True
-        else:
-            backet_flag = False
+
     return render_template('main.html', **params, backet=backet_flag)
 
 
@@ -139,14 +140,14 @@ def change_minus_backet(product_id):
 
 
 # Удаление продукта из корзины
-def delete_product_backet(product_id):
+def delete_product_session(name, product_id):
     ans = db.getProductById(product_id)
-    for product in session['backet']:
+    for product in session[name]:
         if product['product_name'] == ans['product_name']:
-            session['backet'].remove(product)
+            session[name].remove(product)
             session.modified = True
             flash("Товар удален", "success")
-    if len(session['backet']) < 0:
+    if len(session[name]) < 0:
         delete_backet()
 
 
@@ -161,7 +162,7 @@ def backet():
         elif request.form.get('button_minus'):
             change_minus_backet(request.form.get('button_minus'))
         elif request.form.get('button_delete'):
-            delete_product_backet(request.form.get('button_delete'))
+            delete_product_session('backet', request.form.get('button_delete'))
         elif request.form.get('order'):
             db.makeOrder(current_user.get_id(), session['backet'], request.form.get('address'))
             delete_backet()
@@ -182,6 +183,10 @@ def backet():
 
 @app.route("/saved", methods=["POST", "GET"])
 def saved_page():
+    if request.form.get('saved_out'):
+        delete_product_session('saved', request.form['saved_out'])
+    elif request.form.get('backet_go'):
+        add_product_session('backet', request.form['backet_go'])
     if check_session('backet'):
         if len(session['backet']):
             backet_flag = True
@@ -194,10 +199,10 @@ def saved_page():
             saved_flag = True
         else:
             saved_flag = False
-            flash("Избранное пусто 1", "error")
+            flash("Избранное пусто", "error")
             return redirect(url_for('main_page_all'))
     else:
-        flash("Избранное пусто 2", "error")
+        flash("Избранное пусто", "error")
         return redirect(url_for('main_page_all'))
     return render_template('saved.html', products=session['saved'], backet=backet_flag)
 

@@ -41,15 +41,15 @@
                         <p class="card-text">{{ p.text_info[0:200] }}...</p>
                         {% if  current_user.is_authenticated %}
                             <div class="buttons">
-                                <form action="{{ url_for('main_page_all') }}" method="POST">
+                                <form action="{{ url_for('saved_page') }}" method="POST">
                                     <button class="btn btn-outline-light button-backet" id="button_backet"
                                             name="backet_go"
                                             value="{{ p.id }}"
                                             type="submit">В корзину
                                     </button>
                                 </form>
-                                <form action="{{ url_for('main_page_all') }}" method="POST">
-                                    <button type="submit" id="button_saved" name="saved_go"
+                                <form action="{{ url_for('saved_page') }}" method="POST">
+                                    <button type="submit" id="button_saved" name="saved_out"
                                             class="btn btn-outline-info button-saved" value="{{ p.id }}"
                                             style="margin-top: 5px">Удалить из
                                         избранного
