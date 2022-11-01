@@ -191,9 +191,9 @@ def saved_page():
         backet_flag = False
     if check_session('saved'):
         if len(session['saved']):
-            backet_flag = True
+            saved_flag = True
         else:
-            backet_flag = False
+            saved_flag = False
             flash("Избранное пусто 1", "error")
             return redirect(url_for('main_page_all'))
     else:

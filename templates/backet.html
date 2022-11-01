@@ -37,8 +37,8 @@
                                                                                      width="90">
                                 </p>
                                 <form method="post" action="">
-                                    <button class="button-backet" name="button_plus" value="{{ i.id }}">+</button>
-                                    <button class="button-backet" name="button_minus" value="{{ i.id }}">-</button>
+                                    <button class="btn btn-outline-info button-backet" name="button_plus" value="{{ i.id }}">+</button>
+                                    <button class="btn btn-outline-info button-backet" name="button_minus" value="{{ i.id }}">-</button>
                                     <b>{{ i.count }}шт</b>
                                     <br>
                                     <hr style="width: 70%">
@@ -48,7 +48,7 @@
                                 </form>
                             </li>
                             <form method="post" action="">
-                                <button class="button-backet" name="button_delete" value="{{ i.id }}">Удалить из
+                                <button class="btn btn-outline-info button-backet" name="button_delete" value="{{ i.id }}">Удалить из
                                     корзины
                                 </button>
                             </form>
@@ -77,7 +77,7 @@
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}
-                                <button class="button-backet" name="order" value="Оформление заказа">Оформить заказ
+                                <button class="btn btn-outline-info button-backet" name="order" value="Оформление заказа">Оформить заказ
                                 </button>
                             </div>
                         </div>
