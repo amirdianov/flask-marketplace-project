@@ -202,6 +202,16 @@ class Database:
             self.cur.execute(query)
             self.con.commit()
 
+    def getOrdersById(self, user_id):
+        query = f"SELECT * from orders where user_id = '{user_id}'"
+        self.cur.execute(query)
+        res = self.prepare_data(self.cur.fetchall())
+        print(res)
+        if not res:
+            print('Нет такого')
+            return False
+        return res
+
     def prepare_data(self, data):
         products = []
         if len(data):

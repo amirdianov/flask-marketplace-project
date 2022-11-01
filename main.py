@@ -30,12 +30,7 @@ app.register_blueprint(admin, url_prefix='/admin')
 @app.route('/', methods=['GET', 'POST'])
 def main_page_all():
     # delete_saved()
-    backet_flag = None
-    if check_session('backet'):
-        if len(session['backet']):
-            backet_flag = True
-        else:
-            backet_flag = False
+
     cat = request.args.get('category')
     search = request.args.get('search')
     params = {'products': db.getProducts(cat, search),
@@ -53,7 +48,12 @@ def main_page_all():
             if not check_session('saved'):
                 make_session('saved')
             add_product_session('saved', request.form['saved_go'])
-
+    backet_flag = None
+    if check_session('backet'):
+        if len(session['backet']):
+            backet_flag = True
+        else:
+            backet_flag = False
     return render_template('main.html', **params, backet=backet_flag)
 
 
@@ -207,6 +207,13 @@ def saved_page():
     return render_template('saved.html', products=session['saved'], backet=backet_flag)
 
 
+@app.route('/orders', methods=['GET', 'POST'])
+def orders_page():
+    orders = db.getOrdersById(current_user.get_id())
+
+    return render_template('orders.html', orders=orders)
+
+
 # Страница регистрации, если пользователь успешно регистрируется,
 # то перекидывает на авторизацию
 @app.route('/registration', methods=['GET', 'POST'])
@@ -335,11 +342,6 @@ def detail_product_page(product_id):
         else:
             backet_flag = False
     return render_template('view_product.html', product=product, backet=backet_flag)
-
-
-@app.route("/orders", methods=["POST", "GET"])
-def orders_page():
-    pass
 
 
 @app.errorhandler(404)
