@@ -212,6 +212,27 @@ class Database:
             return False
         return res
 
+    def getOrderByNumber(self, num):
+        query = f"SELECT * from orders where number_order = '{num}'"
+        self.cur.execute(query)
+        res = self.prepare_data(self.cur.fetchall())[0]
+        print(res)
+        if not res:
+            print('Нет такого')
+            return False
+        return res
+
+    def getProductsIdByOrderId(self, order_id):
+        query = f"SELECT * from products_ordered where order_id = '{order_id}'"
+        self.cur.execute(query)
+        res = self.prepare_data(self.cur.fetchall())
+        print(res)
+        if not res:
+            print('Нет такого')
+            return False
+        return res
+
+
     def prepare_data(self, data):
         products = []
         if len(data):

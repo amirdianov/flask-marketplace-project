@@ -15,6 +15,7 @@
         TH {
             background: #7c6ec5; /* Цвет фона */
         }
+
         TD {
             color: #7569b0
         }
@@ -52,7 +53,7 @@
             <tr>
                 <td>
                     <a style="color: #7569b0;"
-                       href="{{ url_for('main_page_all')}}">
+                       href="{{ url_for('order_info_page', num=order.number_order) }}">
                         <h5>{{ order.number_order }}</h5></a>
                 </td>
                 <td>

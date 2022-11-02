@@ -214,6 +214,23 @@ def orders_page():
     return render_template('orders.html', orders=orders)
 
 
+@app.route('/orders/<int:num>', methods=['GET', 'POST'])
+def order_info_page(num):
+    ans = db.getOrderByNumber(num)
+    order_id = ans['id']
+    products_info = db.getProductsIdByOrderId(order_id)
+    products = []
+    count_all_products = 0
+    for element in products_info:
+        count_all_products += element['count_product']
+        product_special = db.getProductById(element['product_id'])
+        product = {'product_name': product_special['product_name'], 'product_count': element['count_product'],
+                   'summary': product_special['price'] * element['count_product'], 'id': element['product_id']}
+        products.append(product)
+    return render_template('view_order.html', products=products, summary_order=ans['sum_products'],
+                           count_order=count_all_products)
+
+
 # Страница регистрации, если пользователь успешно регистрируется,
 # то перекидывает на авторизацию
 @app.route('/registration', methods=['GET', 'POST'])
