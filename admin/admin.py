@@ -58,6 +58,12 @@ def detail_product_page(product_id):
 def all_products_page():
     cat = request.args.get('category')
     search = request.args.get('search')
+    if request.method == 'POST':
+        if request.form.get('change'):
+            pass
+        elif request.form.get('delete'):
+            # db.deleteProductById(product_id)
+            pass
     return render_template('admin/all_products.html', title='Все продукты', products=db.getProducts(cat, search))
 
 

@@ -95,7 +95,7 @@ class Database:
         if res:
             return res
         else:
-            []
+            return []
 
     def addProduct(self, product_name, text_info):
         tm = math.floor(time.time())
@@ -103,6 +103,9 @@ class Database:
         self.cur.execute(query)
         self.con.commit()
         return True
+
+    def deleteProductById(self, product_id):
+        pass
 
     def getUser(self, user_id):
         query = f"SELECT * FROM users WHERE id = '{user_id}'"
@@ -231,7 +234,6 @@ class Database:
             print('Нет такого')
             return False
         return res
-
 
     def prepare_data(self, data):
         products = []
