@@ -4,9 +4,39 @@
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{ cat }}">{{ msg }}</div>
     {% endfor %}
-{#    <form method="post" action="{{ url_for('.add_product_page') }}">#}
-{#        <p><label>Название статьи:<input type="text" name="name" value="" style="margin-top: 10px"></label>#}
-{#        <p><label>Текст статьи:<textarea name="post" rows=7 cols=40></textarea></label>#}
-{#        <p><input type="submit" value="Добавить"/>#}
-{#    </form>#}
+    <div class="row row-cols-1 row-cols-md-3 g-4" style="padding-top: 10px">
+        {% for p in products %}
+            <div class="col">
+                <div class="card h-100">
+                    <a class="text-muted" href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                        <img src="{{ p.image_path }}" class="card-img-top" alt="Карточка">
+                    </a>
+                    <div class="card-body">
+                        <h5 style="color: #7569b0"><a style="color: #7569b0; text-decoration: none"
+                                                      href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                            {{ p.product_name }}                         </a>
+                            <hr>
+                            Цена - {{ p.price }}р
+                        </h5>
+                        </a>
+                        <p class="card-text">{{ p.text_info[0:200] }}...</p>
+                            <div class="buttons">
+                                <form action="{{ url_for('main_page_all') }}" method="POST">
+                                    <button class="btn btn-outline-light button-backet" id="button_backet"
+                                            name="backet_go"
+                                            value="{{ p.id }}"
+                                            type="submit">Удалить
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('main_page_all') }}" method="POST">
+                                    <button type="submit" id="button_saved" name="saved_go"
+                                            class="btn btn-outline-info button-saved" value="{{ p.id }}"
+                                            style="margin-top: 5px">Изменить
+                                    </button>
+                                </form>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
 {% endblock %}

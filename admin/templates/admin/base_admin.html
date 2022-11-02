@@ -4,39 +4,100 @@
     <meta charset="utf-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
 
     <title>{{ title }}</title>
-    <link type="text/css" href="{{ url_for('.static', filename='css/styles.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block style %}
+    {% endblock %}
 </head>
 <body>
-{% block content %}
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #403866;">
-        <div class="container-fluid">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #403866;">
+    <div class="container-fluid">
+        {% block brand %}
             <img src="/static/css/backet.png" alt="" width="25" height="25" style="margin-right: 5px"
                  class="d-inline-block align-text-top">
-            <a class="navbar-brand" href="{{ url_for("main_page_all") }}">MarketPlace</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    {% block nav %}
-                        <a class="nav-link active" aria-current="page" href={{ url_for('.all_products_page') }}>Все
-                            продукты</a>
-                        <a class="nav-link" aria-current="page" href={{ url_for('.add_product_page') }}>Добавить
-                            продукты</a>
-                        <a class="nav-link" aria-current="page" href={{ url_for('.all_users_page') }}>Все
-                            пользователи</a>
-                        <a class="nav-link" aria-current="page" href={{ url_for('.add_user_page') }}>Добавить
-                            пользователя</a>
-                        <a class="nav-link" aria-current="page" href={{ url_for('.logout') }}>Выйти из админки
-                            </a>
-                    {% endblock %}
-                </div>
+            <a class="navbar-brand" href={{ url_for('.index') }}>MarketPlace</a>
+        {% endblock %}
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                {% block nav %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown"
+                           aria-expanded="false">Продукты
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('.all_products_page') }}">Все продукты</a>
+                            </li>
+                            <li><a class="dropdown-item" href="{{ url_for('.add_product_page') }}">Добавить продукты</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown"
+                           aria-expanded="false">Пользователи
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('.all_users_page') }}">Все пользователи</a>
+                            </li>
+                            <li><a class="dropdown-item" href="{{ url_for('.add_user_page') }}">Добавить
+                                пользователя</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <a class="nav-link" aria-current="page" href={{ url_for('.logout') }}>Выйти из админки</a>
+                {% endblock %}
             </div>
         </div>
-    </nav>
-{% endblock %}
+        {% block form %}
+        {% endblock %}
+    </div>
+</nav>
+<div class="inform">
+    {% block content %}
+    {% endblock %}
+</div>
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1"></a>
+            <span class="text-muted">© 2021 MarketPlace, Inc</span>
+        </div>
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://vk.com/diyanovamir">
+                    <img src="/static/css/vk.png" width="30" height="30">
+                </a>
+            </li>
+            <li class="ms-3">
+                <a class="text-muted" href="https://t.me/diyanovamir">
+                    <img src="/static/css/telegram.png" width="30" height="30">
+
+                </a>
+            </li>
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/amirdianov">
+                    <img src="/static/css/github.png" width="30" height="30">
+                </a>
+            </li>
+
+        </ul>
+
+    </footer>
+</div>
 </body>
 </html>

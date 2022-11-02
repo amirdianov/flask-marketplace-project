@@ -56,7 +56,9 @@ def detail_product_page(product_id):
 
 @admin.route("/all_products")
 def all_products_page():
-    return render_template('admin/all_products.html', title='Все продукты')
+    cat = request.args.get('category')
+    search = request.args.get('search')
+    return render_template('admin/all_products.html', title='Все продукты', products=db.getProducts(cat, search))
 
 
 @admin.route("/add_product", methods=["POST", "GET"])

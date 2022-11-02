@@ -5,10 +5,10 @@
     <a class="nav-link active" href={{ url_for('login_page') }}>Войти</a>
 {% endblock %}
 {% block content %}
-{{ super() }}
-{% for cat, msg in get_flashed_messages(True) %}
-<div class="flash {{cat}}">{{msg}}</div>
-{% endfor %}
+    {{ super() }}
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+    {% endfor %}
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <div class="wrap">
@@ -31,4 +31,7 @@
             </div>
         </div>
     </form>
+    <div class="d-grid gap-2" style="margin-top: 10px">
+        <a class="btn btn-outline-dark" href="{{ url_for('admin.index') }}" role="button">Админ-панель</a>
+    </div>
 {% endblock %}
