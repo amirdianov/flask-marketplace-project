@@ -1,15 +1,17 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, TextAreaField, FileField, \
+    SelectField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 
 
 class LoginForm(FlaskForm):
     email = StringField("Email: ", validators=[DataRequired(), Email("Incorrect email")])
-    password = PasswordField("Password: ", validators=[DataRequired()])
+    password = PasswordField("Password: ", validators=[DataRequired(), Length(min=1, max=100,
+                                                                              message="Имя должно содержать не менее одного символа")])
 
-    def validate_password(form, field):
-        if len(field.data) > 100 or len(field.data) < 4:
-            raise ValidationError('Name must be less than 100 and more than 4 symbols')
+    # def validate_password(form, field):
+    #     if len(field.data) > 100 or len(field.data) < 4:
+    #         raise ValidationError('Name must be less than 100 and more than 4 symbols')
 
     remember = BooleanField("Remember me: ", default=False)
     submit = SubmitField("Sign in")
@@ -39,3 +41,13 @@ class ProfileForm(FlaskForm):
     password2 = PasswordField("Again password: ",
                               validators=[EqualTo('password', message="Пароли не совпадают")])
     submit = SubmitField('Edit')
+
+
+class AddEditProduct(FlaskForm):
+    product_name = StringField('Name product: ', validators=[DataRequired()])
+    price = IntegerField('Price:', validators=[DataRequired()])
+    text_info = TextAreaField('Information', validators=[DataRequired()])
+    category = SelectField('Select category')
+    count = IntegerField('Count:', validators=[DataRequired()])
+    submit = SubmitField('Confirm')
+    image = FileField('Image', validators=[DataRequired()])

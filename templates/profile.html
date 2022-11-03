@@ -22,10 +22,9 @@
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{ cat }}">{{ msg }}</div>
     {% endfor %}
-    <table style="width: 100%;">
+    <table style="width: 99%;">
         <tr>
             <td>
-
                 <div class="profile-ava"><img src="{{ url_for('userava') }}"
                                               style="width: 200px; height: 200px; padding: 10px"
                                               alt=""></div>

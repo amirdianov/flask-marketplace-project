@@ -16,6 +16,8 @@
 
     <title>{{ title }}</title>
     <link rel="stylesheet" href="/admin/static/css.css">
+    <link rel="shortcut icon" href="/static/css/backet.ico" type="image/x-icon">
+
     {% block style %}
     {% endblock %}
 </head>
@@ -33,7 +35,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                {% block nav %}
+                {% block nav_products %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                            data-toggle="dropdown"
@@ -46,6 +48,8 @@
                             </li>
                         </ul>
                     </li>
+                {% endblock %}
+                {% block nav_users %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                            data-toggle="dropdown"
@@ -61,6 +65,7 @@
                     </li>
                     <a class="nav-link" aria-current="page" href={{ url_for('.logout') }}>Выйти из админки</a>
                 {% endblock %}
+
             </div>
         </div>
         {% block form %}

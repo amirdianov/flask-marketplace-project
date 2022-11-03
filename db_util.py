@@ -89,7 +89,7 @@ class Database:
         return []
 
     def getCategories(self):
-        query = f'SELECT * FROM products_categories'
+        query = f'SELECT * FROM products_categories order by category_name'
         self.cur.execute(query)
         res = self.prepare_data(self.cur.fetchall())
         if res:
@@ -97,15 +97,18 @@ class Database:
         else:
             return []
 
-    def addProduct(self, product_name, text_info):
-        tm = math.floor(time.time())
-        query = f"INSERT INTO products (product_name, price, text_info) values ('{product_name}',{tm},'{text_info}')"
+    def addProduct(self, product_name, price, text_info, image_path, category, count_product):
+        query = f"INSERT INTO products (product_name, price, text_info, image_path, category, count_product)" \
+                f" values ('{product_name}',{price},'{text_info}', '{image_path}', '{category}', '{count_product}')"
         self.cur.execute(query)
         self.con.commit()
         return True
 
     def deleteProductById(self, product_id):
-        pass
+        query = f"UPDATE products SET count_product = 0 where id = {product_id} "
+        self.cur.execute(query)
+        self.con.commit()
+        return True
 
     def getUser(self, user_id):
         query = f"SELECT * FROM users WHERE id = '{user_id}'"

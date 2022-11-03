@@ -1,22 +1,51 @@
 {% extends 'admin/base_admin.html' %}
-{% block nav %}
+{% block nav_users %}
     <a class="nav-link active" aria-current="page" href={{ url_for('.login') }}>Войти</a>
+{% endblock %}
+{% block nav_products %}
 {% endblock %}
 {% block content %}
     {{ super() }}
-    <div id="login" class="wnd_dlg_back login_wnd">
-        <div class="login">
-            <p class="title">Админ-панель</p>
-            {% for cat, msg in get_flashed_messages(True) %}
-                <div class="flash {{ cat }}">{{ msg }}</div>
-            {% endfor %}
-            <form action="" method="post">
-                <p><label class="form-label">Логин:<input type="email" name="email"> </label>
-                <p><label class="form-label">Пароль:<input type="password" name="password"> </label>
-                <p><input class="login_button" type="submit" value="Войти">
-            </form>
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+    {% endfor %}
+
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100 p-t-50 p-b-90">
+                <form action="" method="post" class="form-contact login100-form validate-form flex-sb flex-w">
+                    {{ form.hidden_tag() }}
+                    <span class="login100-form-title p-b-51">
+                        Authorization
+                    </span>
+
+                    {% for field in form if field.name not in  ['csrf_token', 'submit'] %}
+                        <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
+                            {% if field.errors %}
+                                {{ field(class="input100 invalid input-registration-login") }}
+                                <span class="invalid-feedback">
+                                {% for e in field.errors %}
+                                    {{ e }}
+                                {% endfor %}
+                            </span>
+                            {% else %}
+                                {% if field.name == 'email' %}
+                                    {{ field(class='input100 input-registration-login', placeholder='Email') }}
+                                {% elif field.name == 'password' %}
+                                    {{ field(class='input100 input-registration-login', placeholder='Password') }}
+                                {% endif %}
+                            {% endif %}
+                            <span class="focus-input100"></span>
+                        </div>
+                    {% endfor %}
+                    <div class="container-login100-form-btn m-t-17">
+                        <p>{{ form.submit(class='login100-form-btn') }}
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+
     <div class="d-grid gap-2" style="margin-top: 10px">
         <a class="btn btn-light" href="{{ url_for('login_page') }}" role="button">Пользователь</a>
     </div>

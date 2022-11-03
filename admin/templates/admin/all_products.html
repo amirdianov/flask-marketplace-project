@@ -1,4 +1,18 @@
 {% extends 'admin/base_admin.html' %}
+{% block nav_products %}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+           data-toggle="dropdown"
+           aria-expanded="false">Продукты
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item active" href="{{ url_for('.all_products_page') }}">Все продукты</a>
+            </li>
+            <li><a class="dropdown-item" href="{{ url_for('.add_product_page') }}">Добавить продукты</a>
+            </li>
+        </ul>
+    </li>
+{% endblock %}
 {% block content %}
     {{ super() }}
     {% for cat, msg in get_flashed_messages(True) %}
@@ -20,21 +34,21 @@
                         </h5>
                         </a>
                         <p class="card-text">{{ p.text_info[0:200] }}...</p>
-                            <div class="buttons">
-                                <form action="{{ url_for('.all_products_page') }}" method="POST">
-                                    <button class="btn btn-outline-light button-backet" id="button_backet"
-                                            name="delete"
-                                            value="{{ p.id }}"
-                                            type="submit">Удалить
-                                    </button>
-                                </form>
-                                <form action="{{ url_for('.all_products_page') }}" method="POST">
-                                    <button type="submit" id="button_saved" name="change"
-                                            class="btn btn-outline-light button-saved" value="{{ p.id }}"
-                                            style="margin-top: 5px">Изменить
-                                    </button>
-                                </form>
-                            </div>
+                        <div class="buttons">
+                            <form action="{{ url_for('.all_products_page') }}" method="POST">
+                                <button class="btn btn-outline-light button-backet" id="button_backet"
+                                        name="delete"
+                                        value="{{ p.id }}"
+                                        type="submit">Удалить
+                                </button>
+                            </form>
+                            <form action="{{ url_for('.all_products_page') }}" method="POST">
+                                <button type="submit" id="button_saved" name="change"
+                                        class="btn btn-outline-light button-saved" value="{{ p.id }}"
+                                        style="margin-top: 5px">Изменить
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

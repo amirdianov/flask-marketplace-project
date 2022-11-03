@@ -1,12 +1,74 @@
 {% extends 'admin/base_admin.html' %}
+{% block nav_products %}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+           data-toggle="dropdown"
+           aria-expanded="false">Продукты
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item " href="{{ url_for('.all_products_page') }}">Все продукты</a>
+            </li>
+            <li><a class="dropdown-item active" href="{{ url_for('.add_product_page') }}">Добавить продукты</a>
+            </li>
+        </ul>
+    </li>
+{% endblock %}
 {% block content %}
     {{ super() }}
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{ cat }}">{{ msg }}</div>
     {% endfor %}
-    <form method="post" action="{{ url_for('.add_product_page') }}">
-        <p><label>Название статьи:<input type="text" name="name" value="" style="margin-top: 10px"></label>
-        <p><label>Текст статьи:<textarea name="post" rows=7 cols=40></textarea></label>
-        <p><input type="submit" value="Добавить"/>
-    </form>
+    {#    <form method="post" action="{{ url_for('.add_product_page') }}">#}
+    {#        <p><label>Название статьи:<input type="text" name="name" value="" style="margin-top: 10px"></label>#}
+    {#        <p><label>Текст статьи:<textarea name="post" rows=7 cols=40></textarea></label>#}
+    {#        <p><input type="submit" value="Добавить"/>#}
+    {#    </form>#}
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100 p-t-50 p-b-90">
+                <form action="" method="post" class="form-contact login100-form validate-form flex-sb flex-w"
+                      enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <span class="login100-form-title p-b-51">
+                        New product
+                    </span>
+
+                    {% for field in form if field.name not in  ['csrf_token', 'submit'] %}
+                        <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
+                            {% if field.errors %}
+                                {{ field(class="input100 invalid input-registration-login") }}
+                                <span class="invalid-feedback">
+                                {% for e in field.errors %}
+                                    {{ e }}
+                                {% endfor %}
+                            </span>
+                            {% else %}
+                                {% if field.name == 'product_name' %}
+                                    {{ field(class='input100 input-registration-login', placeholder='Name') }}
+                                {% elif field.name == 'price' %}
+                                    {{ field(class='input100 input-registration-login', placeholder='Price') }}
+                                {% elif field.name == 'text_info' %}
+                                    {{ field(class='input100 input-registration-login',style="width: 100%; height: 40px; padding-top: 10px",placeholder="Infromation",
+                                    value='Здесь должна быть информация о товаре') }}
+                                {% elif field.name == 'image' %}
+                                    {{ field(style="width: 100%; height: 30px;") }}
+{#                                    <div class="profile-load">#}
+{#                                            <p><input type="file" name="file">#}
+{#                                    </div>#}
+                                {% elif field.name == 'category' %}
+                                    {{ field(class='input100 input-registration-login', placeholder='Category') }}
+                                {% elif field.name == 'count' %}
+                                    {{ field(class='input100 input-registration-login', placeholder='Count') }}
+                                {% endif %}
+                            {% endif %}
+                            <span class="focus-input100"></span>
+                        </div>
+                    {% endfor %}
+                    <div class="container-login100-form-btn m-t-17">
+                        <p>{{ form.submit(class='login100-form-btn') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
