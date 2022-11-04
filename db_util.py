@@ -125,13 +125,11 @@ class Database:
             self.con.commit()
             return True
 
-
     def deleteProductById(self, product_id):
         query = f"UPDATE products SET count_product = 0 where id = {product_id} "
         self.cur.execute(query)
         self.con.commit()
         return True
-
 
     def deleteProductPhoto(self, get_id):
         query = f"SELECT image_path FROM products WHERE id = '{get_id}'"
@@ -139,7 +137,6 @@ class Database:
         filename = self.prepare_data(self.cur.fetchall())[0]
         if filename['image_path']:
             return filename['image_path']
-
 
     def getUser(self, user_id):
         query = f"SELECT * FROM users WHERE id = '{user_id}'"
@@ -150,6 +147,14 @@ class Database:
             return False
         return res
 
+    def getUsers(self):
+        query = f"SELECT * FROM users"
+        self.cur.execute(query)
+        res = self.prepare_data(self.cur.fetchall())
+        if not res:
+            print('Нет такого')
+            return False
+        return res
 
     def getUserByEmail(self, email):
         query = f"SELECT * FROM users WHERE email = '{email}'"
@@ -159,7 +164,6 @@ class Database:
             print('Нет такого')
             return False
         return res
-
 
     def getUsersCategory(self, email, password):
         query = f"SELECT * FROM users WHERE email = '{email}'"
@@ -174,7 +178,6 @@ class Database:
         if check_password_hash(pas, password):
             print('СОШЛОСЬ')
             return res['category']
-
 
     def addUser(self, email, psw):
         query = f"SELECT COUNT(*) as count FROM users WHERE email LIKE '{email}'"
@@ -191,7 +194,6 @@ class Database:
         self.con.commit()
         return True
 
-
     def editUser(self, user_id, email, psw=None):
         query = f"UPDATE users SET email = '{email}' where id = '{user_id}';"
         if psw:
@@ -200,14 +202,12 @@ class Database:
         self.con.commit()
         return True
 
-
     def updateUserAvatar(self, avatar, user_id):
         if not avatar:
             return False
         self.cur.execute(f"UPDATE users SET profile = '{avatar}' where id = {user_id}")
         self.con.commit()
         return True
-
 
     def deleteUserAvatar(self, get_id):
         query = f"SELECT profile FROM users WHERE id = '{get_id}'"
@@ -216,6 +216,10 @@ class Database:
         if filename['profile']:
             return filename['profile']
 
+    def changeUserCategory(self, id_user_to_change, new_category):
+        query = f"UPDATE users SET category = '{new_category}' where id={id_user_to_change}"
+        self.cur.execute(query)
+        self.con.commit()
 
     def makeOrder(self, user_id, products, address):
         now = datetime.datetime.now()
@@ -246,7 +250,6 @@ class Database:
             self.cur.execute(query)
             self.con.commit()
 
-
     def getOrdersById(self, user_id):
         query = f"SELECT * from orders where user_id = '{user_id}'"
         self.cur.execute(query)
@@ -256,7 +259,6 @@ class Database:
             print('Нет такого')
             return False
         return res
-
 
     def getOrderByNumber(self, num):
         query = f"SELECT * from orders where number_order = '{num}'"
@@ -268,7 +270,6 @@ class Database:
             return False
         return res
 
-
     def getProductsIdByOrderId(self, order_id):
         query = f"SELECT * from products_ordered where order_id = '{order_id}'"
         self.cur.execute(query)
@@ -278,7 +279,6 @@ class Database:
             print('Нет такого')
             return False
         return res
-
 
     def prepare_data(self, data):
         products = []

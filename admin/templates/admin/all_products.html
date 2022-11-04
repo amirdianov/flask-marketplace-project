@@ -32,7 +32,6 @@
                             <hr>
                             Цена - {{ p.price }}р
                         </h5>
-                        </a>
                         <p class="card-text">{{ p.text_info[0:200] }}...</p>
                         <div class="buttons">
                             <form action="{{ url_for('.all_products_page') }}" method="POST">
@@ -53,4 +52,5 @@
                 </div>
             </div>
         {% endfor %}
+    </div>
 {% endblock %}

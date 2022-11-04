@@ -1,10 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'admin/base_admin.html' %}
+{% block nav_users %}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+           data-toggle="dropdown"
+           aria-expanded="false">Пользователи
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item active" href="{{ url_for('.all_users_page') }}">Все пользователи</a>
+            </li>
+        </ul>
+    </li>
+    <a class="nav-link" aria-current="page" href={{ url_for('.logout') }}>Выйти из админки</a>
+{% endblock %}
+{% block style %}
+    <style type="text/css">
+        TABLE {
+            width: 300px; /* Ширина таблицы */
+            border-collapse: collapse;
+            color: white;
+            margin-top: 10px;
+            /* Убираем двойные линии между ячейками */
+        }
 
-</body>
-</html>
+        TD, TH {
+            padding: 3px; /* Поля вокруг содержимого таблицы */
+            border: 1px solid black; /* Параметры рамки */
+        }
+
+        TH {
+            background: gray; /* Цвет фона */
+        }
+
+        TD {
+            color: #0a0701
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    {{ super() }}
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+    {% endfor %}
+    <table style="width: 100%;">
+        <tr>
+            <th>Email</th>
+            <th>Category</th>
+            <th>Change category</th>
+        </tr>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.email }}</td>
+                <td>{{ user.category }}</td>
+                <td>
+                    {% if user.id != current_user_id %}
+                        <form method="post">
+                            <button name="change_category" value="{{ user.id }}">
+                                Сменить категорию
+                            </button>
+                        </form>
+                        {% else %}
+                        <b>Текущий пользователь</b>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

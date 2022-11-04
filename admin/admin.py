@@ -14,8 +14,8 @@ UPLOAD_FOLDER = '/static/media/'
 IMG = 'C:/Users/amird/PycharmProjects/flask-marketplace-project'
 
 
-def login_admin():
-    session['admin_logged'] = 1
+def login_admin(id):
+    session['admin_logged'] = id
 
 
 def isLogged():
@@ -42,7 +42,7 @@ def login():
     if form.validate_on_submit():
         try:
             if db.getUsersCategory(request.form['email'], request.form['password']) == 1:
-                login_admin()
+                login_admin(db.getUserByEmail(request.form['email'])['id'])
                 return redirect(url_for('.index'))
             else:
                 flash('Неверные имя или пароль для админки', 'error')
@@ -144,15 +144,25 @@ def add_product_page():
     return render_template('admin/add_edit_product.html', title="Добавление продукта", form=form)
 
 
-@admin.route("/all_users")
+@admin.route("/all_users", methods=['POST', 'GET'])
 def all_users_page():
     if not isLogged():
         return redirect(url_for('.login'))
-    return render_template('admin/all_users.html', title='Все пользователи')
+    if request.method == 'POST':
+        id_user_to_change = request.form.get('change_category')
+        user = db.getUser(id_user_to_change)
+        if user['category'] == 1:
+            new_category = 2
+        else:
+            new_category = 1
+        db.changeUserCategory(id_user_to_change, new_category)
+    users = db.getUsers()
+    categories = db.getCategories()
 
-
-@admin.route("/add_user")
-def add_user_page():
-    if not isLogged():
-        return redirect(url_for('.login'))
-    return render_template('admin/add_user.html', title='Добавить пользователя')
+    for user in users:
+        if user['category'] == 1:
+            user['category'] = 'admin'
+        elif user['category'] == 2:
+            user['category'] = 'user'
+    return render_template('admin/all_users.html', title='Все пользователи', users=users, categories=categories,
+                           current_user_id=session['admin_logged'])
