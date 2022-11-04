@@ -11,6 +11,8 @@ admin = Blueprint('admin', __name__, template_folder='templates', static_folder=
 db = Database()
 UPLOAD_FOLDER = '/static/media/'
 
+IMG = 'C:/Users/amird/PycharmProjects/flask-marketplace-project'
+
 
 def login_admin():
     session['admin_logged'] = 1
@@ -85,12 +87,16 @@ def all_products_page():
         if request.form.get('change'):
             product = db.getProductById(request.form['change'])
             form = AddEditProduct()
+            form.category.choices = []
+            for g in db.getCategories():
+                form.category.choices.append((g['id'], g['category_name']))
+            form.category.default = product['category']
+            form.process()
+            form.count.data = product['count_product']
             form.product_name.data = product['product_name']
             form.price.data = product['price']
             form.text_info.data = product['text_info']
-            # form.category.data = product['category']
-            form.count.data = product['count_product']
-            return render_template('admin/add_product.html', title='Редактирование', form=form,
+            return render_template('admin/add_edit_product.html', title='Редактирование', form=form,
                                    product_id=request.form['change'])
         elif request.form.get('delete'):
             db.deleteProductById(request.form['delete'])
@@ -106,18 +112,36 @@ def add_product_page():
     for g in db.getCategories():
         form.category.choices.append((g['id'], g['category_name']))
     if form.validate_on_submit():
-        file = form.image.data
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(UPLOAD_FOLDER, 'products/', filename))
+        if not request.form.get('change'):
+            file = form.image.data
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(IMG, UPLOAD_FOLDER, 'products/', filename))
 
-        res = db.addProduct(form.product_name.data, form.price.data, form.text_info.data,
-                            os.path.join(UPLOAD_FOLDER, 'products/', filename), form.category.data, form.count.data)
-        if not res:
-            flash("Ошибка добавления", "error")
-        flash("Товар добавлен", "success")
-        return redirect(url_for('.all_products_page'))
+            res = db.add_edit_Product('add', form.product_name.data, form.price.data, form.text_info.data,
+                                      os.path.join(UPLOAD_FOLDER, 'products/', filename), form.category.data,
+                                      form.count.data)
+            if not res:
+                flash("Ошибка добавления", "error")
+            flash("Товар добавлен", "success")
+            return redirect(url_for('.all_products_page'))
+        elif request.form.get('change'):
+            file = form.image.data
+            filename = secure_filename(file.filename)
+            if filename:
+                os.remove(IMG + db.deleteProductPhoto(request.form['change']))
+                file.save(os.path.join(IMG + UPLOAD_FOLDER, 'products/', filename))
+            else:
+                filename = db.getProductById(request.form['change'])['image_path']
+            res = db.add_edit_Product('change', form.product_name.data, form.price.data,
+                                      form.text_info.data,
+                                      os.path.join(UPLOAD_FOLDER, 'products/', filename), form.category.data,
+                                      form.count.data, request.form['change'])
+            if not res:
+                flash("Ошибка добавления", "error")
+            flash("Товар изменен", "success")
+            return redirect(url_for('.all_products_page'))
 
-    return render_template('admin/add_product.html', title="Добавление продукта", form=form)
+    return render_template('admin/add_edit_product.html', title="Добавление продукта", form=form)
 
 
 @admin.route("/all_users")

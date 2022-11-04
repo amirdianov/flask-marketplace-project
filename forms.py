@@ -50,4 +50,4 @@ class AddEditProduct(FlaskForm):
     category = SelectField('Select category')
     count = IntegerField('Count:', validators=[DataRequired()])
     submit = SubmitField('Confirm')
-    image = FileField('Image', validators=[DataRequired()])
+    image = FileField('Image', validators=[])
