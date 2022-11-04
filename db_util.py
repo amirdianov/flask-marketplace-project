@@ -97,6 +97,15 @@ class Database:
         else:
             return []
 
+    def getPhoto(self, product_id):
+        query = f"SELECT * FROM products where id={product_id}"
+        self.cur.execute(query)
+        res = self.prepare_data(self.cur.fetchall())[0]
+        img = r'C:\Users\amird\PycharmProjects\flask-marketplace-project' + res['image_path']
+        with open(img, 'rb') as f:
+            img = f.read()
+        return img
+
     def addProduct(self, product_name, price, text_info, image_path, category, count_product):
         query = f"INSERT INTO products (product_name, price, text_info, image_path, category, count_product)" \
                 f" values ('{product_name}',{price},'{text_info}', '{image_path}', '{category}', '{count_product}')"

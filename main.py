@@ -54,7 +54,7 @@ def main_page_all():
             backet_flag = True
         else:
             backet_flag = False
-    return render_template('main.html', **params, backet=backet_flag)
+    return render_template('main.html', title='Главная страница', **params, backet=backet_flag)
 
 
 # Создает корзину (избранное), при добавлении первого товара

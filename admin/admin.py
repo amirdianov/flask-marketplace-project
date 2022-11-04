@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint, request, flash, redirect, url_for, render_template, session
+from flask import Blueprint, request, flash, redirect, url_for, render_template, session, make_response
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 
@@ -65,6 +65,16 @@ def detail_product_page(product_id):
     return render_template('view_product.html', product=product)
 
 
+@admin.route('/productphoto/<int:product_id>')
+def product_photo(product_id):
+    img = db.getPhoto(product_id)
+    if not img:
+        return ''
+    h = make_response(img)
+    h.headers['Content-Type'] = 'image/png'
+    return h
+
+
 @admin.route("/all_products", methods=["POST", "GET"])
 def all_products_page():
     if not isLogged():
@@ -73,7 +83,15 @@ def all_products_page():
     search = request.args.get('search')
     if request.method == 'POST':
         if request.form.get('change'):
-            pass
+            product = db.getProductById(request.form['change'])
+            form = AddEditProduct()
+            form.product_name.data = product['product_name']
+            form.price.data = product['price']
+            form.text_info.data = product['text_info']
+            # form.category.data = product['category']
+            form.count.data = product['count_product']
+            return render_template('admin/add_product.html', title='Редактирование', form=form,
+                                   product_id=request.form['change'])
         elif request.form.get('delete'):
             db.deleteProductById(request.form['delete'])
     return render_template('admin/all_products.html', title='Все продукты', products=db.getProducts(cat, search))
