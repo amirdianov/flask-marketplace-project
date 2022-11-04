@@ -22,12 +22,12 @@
         {% for p in products %}
             <div class="col">
                 <div class="card h-100">
-                    <a class="text-muted" href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                    <a class="text-muted" href="{{ url_for('.detail_product_page', product_id=p.id) }}">
                         <img src="{{ p.image_path }}" class="card-img-top" alt="Карточка">
                     </a>
                     <div class="card-body">
                         <h5 style="color: #0a0701"><a style="color: #0a0701; text-decoration: none"
-                                                      href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                                                      href="{{ url_for('.detail_product_page', product_id=p.id) }}">
                             {{ p.product_name }}                         </a>
                             <hr>
                             Цена - {{ p.price }}р

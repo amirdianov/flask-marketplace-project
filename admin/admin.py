@@ -64,7 +64,7 @@ def detail_product_page(product_id):
     if not isLogged():
         return redirect(url_for('.login'))
     product = db.getProductById(product_id)
-    return render_template('view_product.html', product=product)
+    return render_template('admin/view_product_admin.html', product=product)
 
 
 @admin.route('/productphoto/<int:product_id>')
