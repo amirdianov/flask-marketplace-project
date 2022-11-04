@@ -115,7 +115,7 @@ def add_product_page():
         if not request.form.get('change'):
             file = form.image.data
             filename = secure_filename(file.filename)
-            file.save(os.path.join(IMG, UPLOAD_FOLDER, 'products/', filename))
+            file.save(os.path.join(IMG + UPLOAD_FOLDER, 'products/', filename))
 
             res = db.add_edit_Product('add', form.product_name.data, form.price.data, form.text_info.data,
                                       os.path.join(UPLOAD_FOLDER, 'products/', filename), form.category.data,
