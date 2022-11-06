@@ -6,12 +6,8 @@ from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationE
 
 class LoginForm(FlaskForm):
     email = StringField("Email: ", validators=[DataRequired(), Email("Incorrect email")])
-    password = PasswordField("Password: ", validators=[DataRequired(), Length(min=1, max=100,
-                                                                              message="Имя должно содержать не менее одного символа")])
-
-    # def validate_password(form, field):
-    #     if len(field.data) > 100 or len(field.data) < 4:
-    #         raise ValidationError('Name must be less than 100 and more than 4 symbols')
+    password = PasswordField("Password: ", validators=[DataRequired(), Length(min=4, max=100,
+                                                                              message="Пароль от 4 до 100 символов")])
 
     remember = BooleanField("Remember me: ", default=False)
     submit = SubmitField("Sign in")

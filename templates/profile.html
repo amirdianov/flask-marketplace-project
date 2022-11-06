@@ -44,7 +44,7 @@
                     <div class="wrap-input100 validate-input m-b-16" data-validate="Email is required">
                         {% if form.email.errors %}
                             {{ form.email(class="input100 invalid input-registration-login") }}
-                            <span class="invalid-feedback">
+                            <span class="invalid-answer">
                              {% for e in form.email.errors %}
                                  {{ e }}
                              {% endfor %}
@@ -57,7 +57,7 @@
                     <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
                         {% if form.password.errors %}
                             {{ form.password(class="input100 invalid input-registration-login") }}
-                            <span class="invalid-feedback">
+                            <span class="invalid-answer">
                              {% for e in form.password.errors %}
                                  {{ e }}
                              {% endfor %}
@@ -71,7 +71,7 @@
 
                         {% if form.password2.errors %}
                             {{ form.password2(class="input100 invalid input-registration-login") }}
-                            <span class="invalid-feedback">
+                            <span class="invalid-answer">
                              {% for e in form.password2.errors %}
                                  {{ e }}
                              {% endfor %}

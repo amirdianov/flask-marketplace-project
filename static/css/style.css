@@ -10,9 +10,10 @@
     background: #FF9898;
 }
 
-.form-contact .invalid-feedback {
+.form-contact .invalid-answer {
     color: #CC0000;
 }
+
 
 .flash {
     padding: 10px;
@@ -97,9 +98,12 @@ body {
 .wrap-input100 {
     width: 100%;
     position: relative;
-    background-color: #e6e6e6;
+    /*background-color: #e6e6e6;*/
     border: 1px solid transparent;
     border-radius: 3px;
+}
+.line-form{
+    background-color: #e6e6e6;
 }
 
 .m-b-16 {
@@ -183,11 +187,11 @@ body {
 .button-backet {
     border-color: #6957c0;
     color: #fff;
-    box-shadow: 0 0 40px 40px  #6957c0 inset, 0 0 0 0  #6957c0;
+    box-shadow: 0 0 40px 40px #6957c0 inset, 0 0 0 0 #6957c0;
     -webkit-transition: all 150ms ease-in-out;
     transition: all 150ms ease-in-out;
 }
 
 .button-backet:hover {
-    box-shadow: 0 0 10px 0  #6957c0 inset, 0 0 10px 4px  #6957c0;
+    box-shadow: 0 0 10px 0 #6957c0 inset, 0 0 10px 4px #6957c0;
 }
