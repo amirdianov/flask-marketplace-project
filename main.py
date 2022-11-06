@@ -186,7 +186,12 @@ def saved_page():
     if request.form.get('saved_out'):
         delete_product_session('saved', request.form['saved_out'])
     elif request.form.get('backet_go'):
-        add_product_session('backet', request.form['backet_go'])
+        if check_session('backet'):
+            add_product_session('backet', request.form['backet_go'])
+        else:
+            make_session('backet')
+            add_product_session('backet', request.form['backet_go'])
+
     if check_session('backet'):
         if len(session['backet']):
             backet_flag = True
