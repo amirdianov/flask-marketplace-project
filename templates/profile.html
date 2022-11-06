@@ -22,69 +22,123 @@
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{ cat }}">{{ msg }}</div>
     {% endfor %}
-    <table style="width: 99%;">
+    <table>
         <tr>
             <td>
-                <div class="profile-ava"><img src="{{ url_for('userava') }}"
-                                              style="width: 200px; height: 200px; padding: 10px"
-                                              alt=""></div>
-                <div class="profile-load">
-                    <form action="{{ url_for('upload_avatar') }}" method="POST" enctype="multipart/form-data">
-                        <p><input type="file" name="file">
-                        <p><input type="submit" value="Загрузить">
-                    </form>
+                <div class="profile-photo" style="margin-left: 30px">
+                    <div class="profile-ava"><img src="{{ url_for('userava') }}"
+                                                  style="width: 200px; height: 200px; padding: 10px"
+                                                  alt=""></div>
+                    <div class="profile-load" style="margin-left: 10px">
+                        <form action="{{ url_for('upload_avatar') }}" method="POST" enctype="multipart/form-data">
+                            <p><input type="file" name="file">
+                            <p><input type="submit" value="Загрузить">
+                        </form>
+                    </div>
                 </div>
             </td>
-            <td>
-                <form action="" method="post" class="form-contact login100-form validate-form flex-sb flex-w">
-                    {{ form.hidden_tag() }}
-                    <span class="login100-form-title p-b-51">
-                        Профиль
-                    </span>
-                    <div class="wrap-input100 validate-input m-b-16" data-validate="Email is required">
-                        {% if form.email.errors %}
-                            {{ form.email(class="input100 invalid input-registration-login") }}
-                            <span class="invalid-answer">
-                             {% for e in form.email.errors %}
-                                 {{ e }}
-                             {% endfor %}
-                        </span>
-                        {% else %}
-                            {{ form.email(class='input100 input-registration-login', value=data.email) }}
-                        {% endif %}
-                        <span class="focus-input100"></span>
-                    </div>
-                    <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
-                        {% if form.password.errors %}
-                            {{ form.password(class="input100 invalid input-registration-login") }}
-                            <span class="invalid-answer">
-                             {% for e in form.password.errors %}
-                                 {{ e }}
-                             {% endfor %}
-                        </span>
-                        {% else %}
-                            {{ form.password(class='input100 input-registration-login', placeholder='Password') }}
-                        {% endif %}
-                        <span class="focus-input100"></span>
-                    </div>
-                    <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
+            <td style="width: 100%">
+                <div class="limiter-profile">
+                    <div class="container-login100">
+                        <div class="wrap-login100 p-t-50 p-b-90" style="margin-top: -60px">
+                            <form action="" method="post"
+                                  class="form-contact login100-form validate-form flex-sb flex-w">
+                                {{ form.hidden_tag() }}
+                                <span class="login100-form-title p-b-51">
+                                    Profile
+                                </span>
+                                {% for field in form if field.name not in  ['csrf_token', 'submit'] %}
+                                    <div class="wrap-input100 validate-input m-b-16"
+                                         data-validate="Password is required">
+                                        {% if field.errors %}
+                                            {% if field.name == 'email' %}
+                                                {{ field(class='input100 input-registration-login invalid', placeholder='Email') }}
+                                            {% elif field.name == 'password' %}
+                                                {{ field(class='input100 input-registration-login invalid', placeholder='Password') }}
+                                            {% elif field.name == 'password2' %}
+                                                {{ field(class='input100 input-registration-login invalid', placeholder='Again password') }}
+                                            {% endif %}
+                                            <span class="invalid-answer">
+                                {% for e in field.errors %}
+                                    {{ e }}
+                                {% endfor %}
+                                </span>
+                                        {% else %}
+                                            {% if field.name == 'email' %}
+                                                <div class="line-form">
+                                                    {{ field(class='input100 input-registration-login', placeholder='Email', value=data.email) }}
+                                                </div>
+                                            {% elif field.name == 'password' %}
 
-                        {% if form.password2.errors %}
-                            {{ form.password2(class="input100 invalid input-registration-login") }}
-                            <span class="invalid-answer">
-                             {% for e in form.password2.errors %}
-                                 {{ e }}
-                             {% endfor %}
-                        </span>
-                        {% else %}
-                            {{ form.password2(class='input100 input-registration-login', placeholder='Again password') }}
-                        {% endif %}
-                        <span class="focus-input100"></span>
+                                                <div class="line-form">
+                                                    {{ field(class='input100 input-registration-login', placeholder='Password') }}
+                                                </div>
+                                            {% elif field.name == 'password2' %}
+
+                                                <div class="line-form">
+                                                    {{ field(class='input100 input-registration-login', placeholder='Again password') }}
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                        <span class="focus-input100"></span>
+                                    </div>
+                                {% endfor %}
+                                <div class="container-login100-form-btn m-t-17">
+                                    <p>{{ form.submit(class='login100-form-btn') }}
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="container-login100-form-btn m-t-17">
-                        <p>{{ form.submit(class='login100-form-btn') }}
-                    </div>
-                </form>
+                </div>
+                {#                <form action="" method="post" class="form-contact login100-form validate-form flex-sb flex-w">#}
+                {#                    {{ form.hidden_tag() }}#}
+                {#                    <span class="login100-form-title p-b-51">#}
+                {#                        Profile#}
+                {#                    </span>#}
+                {#                    <div class="wrap-input100 validate-input m-b-16" data-validate="Email is required">#}
+                {#                        {% if form.email.errors %}#}
+                {#                            {{ form.email(class="input100 invalid input-registration-login") }}#}
+                {#                            <span class="invalid-answer">#}
+                {#                             {% for e in form.email.errors %}#}
+                {#                                 {{ e }}#}
+                {#                             {% endfor %}#}
+                {#                        </span>#}
+                {#                        {% else %}#}
+                {#                            {{ form.email(class='input100 input-registration-login', value=data.email) }}#}
+                {#                        {% endif %}#}
+                {#                        <span class="focus-input100"></span>#}
+                {#                    </div>#}
+                {#                    <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">#}
+                {#                        {% if form.password.errors %}#}
+                {#                            {{ form.password(class="input100 invalid input-registration-login") }}#}
+                {#                            <span class="invalid-answer">#}
+                {#                             {% for e in form.password.errors %}#}
+                {#                                 {{ e }}#}
+                {#                             {% endfor %}#}
+                {#                        </span>#}
+                {#                        {% else %}#}
+                {#                            {{ form.password(class='input100 input-registration-login', placeholder='Password') }}#}
+                {#                        {% endif %}#}
+                {#                        <span class="focus-input100"></span>#}
+                {#                    </div>#}
+                {#                    <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">#}
+                {##}
+                {#                        {% if form.password2.errors %}#}
+                {#                            {{ form.password2(class="input100 invalid input-registration-login") }}#}
+                {#                            <span class="invalid-answer">#}
+                {#                             {% for e in form.password2.errors %}#}
+                {#                                 {{ e }}#}
+                {#                             {% endfor %}#}
+                {#                        </span>#}
+                {#                        {% else %}#}
+                {#                            {{ form.password2(class='input100 input-registration-login', placeholder='Again password') }}#}
+                {#                        {% endif %}#}
+                {#                        <span class="focus-input100"></span>#}
+                {#                    </div>#}
+                {#                    <div class="container-login100-form-btn m-t-17">#}
+                {#                        <p>{{ form.submit(class='login100-form-btn') }}#}
+                {#                    </div>#}
+                {#                </form>#}
             </td>
         </tr>
     </table>

@@ -15,7 +15,7 @@
                 <form action="" method="post" class="form-contact login100-form validate-form flex-sb flex-w">
                     {{ form.hidden_tag() }}
                     <span class="login100-form-title p-b-51">
-                        Authorization
+                        Login
                     </span>
                     {% for field in form if field.name not in  ['csrf_token', 'submit'] %}
                         <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
