@@ -45,8 +45,8 @@ def main_page_all():
             if check_count_product(request.form['backet_go']):
                 add_product_session('backet', request.form['backet_go'])
         elif request.form.get('saved_go'):
-            if not check_session('saved'):
-                make_session('saved')
+            if not check_session('saved', current_user_id=current_user.get_id()):
+                make_session('saved', current_user_id=current_user.get_id())
             add_product_session('saved', request.form['saved_go'])
     backet_flag = None
     if check_session('backet'):
@@ -58,14 +58,30 @@ def main_page_all():
 
 
 # Создает корзину (избранное), при добавлении первого товара
-def make_session(name):
-    session[name] = []
+def make_session(name, current_user_id=None):
+    if name == 'saved':
+        session[name][current_user_id] = []
+    elif name == 'backet':
+        session[name] = []
     session.modified = True
 
 
 # Проверяет, создана ли корзина (избранное)
-def check_session(name):
-    return True if f'{name}' in session.keys() else False
+def check_session(name, current_user_id=None):
+    print(session['saved'])
+    if name == 'saved':
+        if f'{name}' in session.keys():
+            for user in session['saved'].keys():
+                print(user, current_user_id)
+                if user == current_user_id:
+                    return True
+            else:
+                return False
+        else:
+            session['saved'] = {}
+            session.modified = True
+    elif name == 'backet':
+        return True if f'{name}' in session.keys() else False
 
 
 # Проверяет можно ли добавить продукт по кнопке (в корзину с главной странцы)
@@ -95,11 +111,11 @@ def add_product_session(name, product_id):
             ans['count'] = 1
             session['backet'] += [ans]
     elif name == 'saved':
-        for product in session['saved']:
+        for product in session['saved'][current_user.get_id()]:
             if product['product_name'] == ans['product_name']:
                 flash('Такой товар уже есть в избранном', 'error')
                 return
-        session['saved'] += [ans]
+        session['saved'][current_user.get_id()] += [ans]
         session.modified = True
 
         flash('Товар успешно добавлен в избранное', 'success')
@@ -140,15 +156,23 @@ def change_minus_backet(product_id):
 
 
 # Удаление продукта из корзины
-def delete_product_session(name, product_id):
+def delete_product_session(name, product_id, current_user_id=None):
     ans = db.getProductById(product_id)
-    for product in session[name]:
-        if product['product_name'] == ans['product_name']:
-            session[name].remove(product)
-            session.modified = True
-            flash("Товар удален", "success")
-    if len(session[name]) < 0:
-        delete_backet()
+    if name == 'backet':
+        for product in session[name]:
+            if product['product_name'] == ans['product_name']:
+                session[name].remove(product)
+                session.modified = True
+                flash("Товар удален", "success")
+        if len(session[name]) < 0:
+            delete_backet()
+    elif name == 'saved':
+        for product in session[name][current_user_id]:
+            if product['product_name'] == ans['product_name']:
+                session[name][current_user_id].remove(product)
+                session.modified = True
+                flash("Товар удален", "success")
+
 
 
 # Корзина
@@ -184,7 +208,7 @@ def backet():
 @app.route("/saved", methods=["POST", "GET"])
 def saved_page():
     if request.form.get('saved_out'):
-        delete_product_session('saved', request.form['saved_out'])
+        delete_product_session('saved', request.form['saved_out'], current_user_id=current_user.get_id())
     elif request.form.get('backet_go'):
         if check_session('backet'):
             add_product_session('backet', request.form['backet_go'])
@@ -199,8 +223,8 @@ def saved_page():
             backet_flag = False
     else:
         backet_flag = False
-    if check_session('saved'):
-        if len(session['saved']):
+    if check_session('saved', current_user_id=current_user.get_id()):
+        if len(session['saved'][current_user.get_id()]):
             saved_flag = True
         else:
             saved_flag = False
@@ -209,14 +233,17 @@ def saved_page():
     else:
         flash("Избранное пусто", "error")
         return redirect(url_for('main_page_all'))
-    return render_template('saved.html', products=session['saved'], backet=backet_flag)
+    return render_template('saved.html', products=session['saved'][current_user.get_id()], backet=backet_flag)
 
 
 @app.route('/orders', methods=['GET', 'POST'])
 def orders_page():
     orders = db.getOrdersById(current_user.get_id())
-
-    return render_template('orders.html', orders=orders)
+    if orders:
+        return render_template('orders.html', orders=orders)
+    else:
+        flash('У вас еще не было заказов', 'error')
+        return redirect(url_for('main_page_all'))
 
 
 @app.route('/orders/<int:num>', methods=['GET', 'POST'])
