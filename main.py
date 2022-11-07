@@ -26,11 +26,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.register_blueprint(admin, url_prefix='/admin')
 
 
-# Главная страница доступна всем пользователям
 @app.route('/', methods=['GET', 'POST'])
 def main_page_all():
+    """Главная страница доступна всем пользователям"""
     # delete_saved()
-
     cat = request.args.get('category')
     search = request.args.get('search')
     params = {'products': db.getProducts(cat, search),
@@ -57,8 +56,8 @@ def main_page_all():
     return render_template('main.html', title='Главная страница', **params, backet=backet_flag)
 
 
-# Создает корзину (избранное), при добавлении первого товара
 def make_session(name, current_user_id=None):
+    """Создает корзину (избранное), при добавлении первого товара"""
     if name == 'saved':
         session[name][current_user_id] = []
     elif name == 'backet':
@@ -66,8 +65,8 @@ def make_session(name, current_user_id=None):
     session.modified = True
 
 
-# Проверяет, создана ли корзина (избранное)
 def check_session(name, current_user_id=None):
+    """Проверяет, создана ли корзина (избранное)"""
     print(session['saved'])
     if name == 'saved':
         if f'{name}' in session.keys():
@@ -84,8 +83,8 @@ def check_session(name, current_user_id=None):
         return True if f'{name}' in session.keys() else False
 
 
-# Проверяет можно ли добавить продукт по кнопке (в корзину с главной странцы)
 def check_count_product(product_id):
+    """Проверяет можно ли добавить продукт по кнопке (в корзину с главной странцы)"""
     ans = db.getProductById(product_id)
     for product in session['backet']:
         if product['product_name'] == ans['product_name']:
@@ -97,8 +96,8 @@ def check_count_product(product_id):
     return True
 
 
-# Добавляет продукт в корзину
 def add_product_session(name, product_id):
+    """Добавляет продукт в корзину"""
     ans = db.getProductById(product_id)
     flag = False
     if name == 'backet':
@@ -121,17 +120,18 @@ def add_product_session(name, product_id):
         flash('Товар успешно добавлен в избранное', 'success')
 
 
-# Удаляет корзину
 def delete_backet():
+    """Удаляет корзину"""
     session.pop('backet', None)
 
 
 def delete_saved():
+    """Удаляет избранное"""
     session.pop('saved', None)
 
 
-# Увеличение количества продуктов +
 def change_plus_backet(product_id):
+    """Увеличение количества продуктов +"""
     ans = db.getProductById(product_id)
     for product in session['backet']:
         if product['product_name'] == ans['product_name']:
@@ -142,8 +142,8 @@ def change_plus_backet(product_id):
                 session.modified = True
 
 
-# Уменьшение количества продуктов -
 def change_minus_backet(product_id):
+    """Уменьшение количества продуктов -"""
     ans = db.getProductById(product_id)
     for product in session['backet']:
         if product['product_name'] == ans['product_name']:
@@ -155,8 +155,8 @@ def change_minus_backet(product_id):
         delete_backet()
 
 
-# Удаление продукта из корзины
 def delete_product_session(name, product_id, current_user_id=None):
+    """# Удаление продукта из корзины"""
     ans = db.getProductById(product_id)
     if name == 'backet':
         for product in session[name]:
@@ -174,11 +174,10 @@ def delete_product_session(name, product_id, current_user_id=None):
                 flash("Товар удален", "success")
 
 
-
-# Корзина
 @app.route('/backet', methods=['GET', 'POST'])
 @login_required
 def backet():
+    """Страница корзины"""
     form = MakeOrder()
     if request.method == 'POST':
         if request.form.get('button_plus'):
@@ -207,6 +206,7 @@ def backet():
 
 @app.route("/saved", methods=["POST", "GET"])
 def saved_page():
+    """Страница избранных"""
     if request.form.get('saved_out'):
         delete_product_session('saved', request.form['saved_out'], current_user_id=current_user.get_id())
     elif request.form.get('backet_go'):
@@ -238,6 +238,7 @@ def saved_page():
 
 @app.route('/orders', methods=['GET', 'POST'])
 def orders_page():
+    """Страница заказов внутри пользователя"""
     orders = db.getOrdersById(current_user.get_id())
     if orders:
         return render_template('orders.html', orders=orders)
@@ -248,6 +249,7 @@ def orders_page():
 
 @app.route('/orders/<int:num>', methods=['GET', 'POST'])
 def order_info_page(num):
+    """Информация о заказе пользователя"""
     ans = db.getOrderByNumber(num)
     order_id = ans['id']
     products_info = db.getProductsIdByOrderId(order_id)
@@ -267,6 +269,7 @@ def order_info_page(num):
 # то перекидывает на авторизацию
 @app.route('/registration', methods=['GET', 'POST'])
 def registration_page():
+    """Страница регистрации"""
     if current_user.is_authenticated:
         return redirect(url_for('profile_page'))
     form = RegistrationForm()
@@ -282,11 +285,9 @@ def registration_page():
     return render_template("registration.html", title="Регистрация", form=form)
 
 
-# Страница для авторизации
 @app.route("/login", methods=["POST", "GET"])
 def login_page():
-    # заглушка, чтобы нельзя было перейти по данному адресу пользователю
-    # который уже зарегистрирован
+    """Страница для авторизации"""
     if current_user.is_authenticated:
         return redirect(url_for('profile_page'))
     form = LoginForm()
@@ -305,6 +306,7 @@ def login_page():
 @app.route('/logout')
 @login_required
 def logout():
+    """Метод для удаления пользовтаеля из сессии"""
     logout_user()
     delete_backet()
     flash("Вы вышли из аккаунта", "success")
@@ -313,14 +315,15 @@ def logout():
 
 @login_manager.user_loader
 def load_user(user_id):
+    """Загрузка пользователя в сессию"""
     print("load_user")
     return UserLogin().fromDB(user_id, db)
 
 
-# Страница профиля зарегистрированного пользователя
 @app.route('/profile', methods=["POST", "GET"])
 @login_required
 def profile_page():
+    """Страница профиля пользователя с картинкой и полями"""
     form = ProfileForm()
     if form.validate_on_submit():
         session.pop('_flashes', None)
@@ -346,10 +349,10 @@ def profile_page():
     return render_template('profile.html', backet=backet_flag, data=context, form=form)
 
 
-# Получает фото в формате png - толькоё
 @app.route('/userava')
 @login_required
 def userava():
+    """Получение фото в профиле"""
     img = current_user.getAvatar(app)
     if not img:
         return ''
@@ -362,6 +365,7 @@ def userava():
 @app.route('/upload_avatar', methods=['POST', 'GET'])
 @login_required
 def upload_avatar():
+    """Метод для загрузки фото профиля"""
     if request.method == 'POST':
         file = request.files['file']
         if file and current_user.verifyExt(file.filename):
@@ -383,6 +387,7 @@ def upload_avatar():
 # Просмотр товара - вьюшка для товара
 @app.route("/view_product/<int:product_id>", methods=["POST", "GET"])
 def detail_product_page(product_id):
+    """Детальный просмотр конкретного товара"""
     product = db.getProductById(product_id)
     backet_flag = None
     if check_session('backet'):
@@ -395,6 +400,7 @@ def detail_product_page(product_id):
 
 @app.errorhandler(404)
 def pageNotFount(error):
+    """Страница для страницы, которую не смогу найти браузер """
     return render_template('page404.html', title="Страница не найдена")
 
 
