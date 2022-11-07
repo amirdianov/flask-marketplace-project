@@ -69,6 +69,7 @@ class Database:
         )
         self.cur = self.con.cursor()
 
+    # todo %s
     def getProducts(self, cat, search):
         """Выведение всех продуктов по определенынм критериям"""
         if cat and search:
@@ -91,8 +92,8 @@ class Database:
 
     def getProductById(self, product_id):
         """Получение продукта по ID"""
-        query = f"SELECT * FROM products where id='{product_id}'"
-        self.cur.execute(query)
+        query = 'SELECT * FROM products where id= %s', (product_id,)
+        self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())
         if res:
             return res[0]
@@ -110,21 +111,22 @@ class Database:
 
     def getPhoto(self, product_id):
         """Получение фото продукта для редактирования объявления"""
-        query = f"SELECT * FROM products where id={product_id}"
-        self.cur.execute(query)
+        query = 'SELECT * FROM products where id=%s', (product_id,)
+        self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())[0]
         img = r'C:\Users\amird\PycharmProjects\flask-marketplace-project' + res['image_path']
         with open(img, 'rb') as f:
             img = f.read()
         return img
 
+    # todo %s
     def add_edit_Product(self, type_operation, product_name, price, text_info, image_path, category, count_product,
                          product_id=None):
         """Добавление, изменение продуктов"""
         if type_operation == 'add':
-            query = f"INSERT INTO products (product_name, price, text_info, image_path, category, count_product)" \
-                    f" values ('{product_name}',{price},'{text_info}', '{image_path}', '{category}', '{count_product}')"
-            self.cur.execute(query)
+            query = 'INSERT INTO products (product_name, price, text_info, image_path, category, count_product)' \
+                    'VALUES (%s,%s,%s,%s,%s,%s)', (product_name, price, text_info, image_path, category, count_product)
+            self.cur.execute(*query)
             self.con.commit()
             return True
         else:
@@ -140,23 +142,23 @@ class Database:
 
     def deleteProductById(self, product_id):
         """Удаление продукта, в случае нехватки его на складе"""
-        query = f"UPDATE products SET count_product = 0 where id = {product_id} "
-        self.cur.execute(query)
+        query = 'UPDATE products SET count_product = 0 where id = %s', (product_id,)
+        self.cur.execute(*query)
         self.con.commit()
         return True
 
     def deleteProductPhoto(self, get_id):
         """Удаление фото продукта"""
-        query = f"SELECT image_path FROM products WHERE id = '{get_id}'"
-        self.cur.execute(query)
+        query = 'SELECT image_path FROM products WHERE id = %s', (get_id,)
+        self.cur.execute(*query)
         filename = self.prepare_data(self.cur.fetchall())[0]
         if filename['image_path']:
             return filename['image_path']
 
     def getUser(self, user_id):
         """Получение информации о пользователе по id"""
-        query = f"SELECT * FROM users WHERE id = '{user_id}'"
-        self.cur.execute(query)
+        query = "SELECT * FROM users WHERE id = %s", (user_id,)
+        self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())[0]
         if not res:
             print('Нет такого')
@@ -175,8 +177,9 @@ class Database:
 
     def getUserByEmail(self, email):
         """Получение информации о пользователе по email"""
-        query = f"SELECT * FROM users WHERE email = '{email}'"
-        self.cur.execute(query)
+        query = 'SELECT * FROM users WHERE email = %s', (email,)
+        self.cur.execute(*query)
+
         res = self.prepare_data(self.cur.fetchall())[0]
         if not res:
             print('Нет такого')
@@ -185,8 +188,8 @@ class Database:
 
     def getUsersCategory(self, email, password):
         """Получение категории пользователя, для доступа к админке исключительно АДМИНАМ"""
-        query = f"SELECT * FROM users WHERE email = '{email}'"
-        self.cur.execute(query)
+        query = 'SELECT * FROM users WHERE email = %s', (email,)
+        self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())[0]
         print(res)
         pas = res['password']
@@ -200,20 +203,20 @@ class Database:
 
     def addUser(self, email, psw):
         """Регистрация пользователя, внесение в бд"""
-        query = f"SELECT COUNT(*) as count FROM users WHERE email LIKE '{email}'"
-        self.cur.execute(query)
+        query = 'SELECT COUNT(*) as count FROM users WHERE email LIKE %s', (email,)
+        self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())
         print(res)
         if res[0]['count'] > 0:
             print("Пользователь с таким email уже существует")
             return False
 
-        # tm = math.floor(time.time())
-        query = f"INSERT INTO users (email, password) VALUES ('{email}', '{psw}')"
+        query = 'INSERT INTO users (email, password) VALUES (%s, %s)', (email, psw)
         self.cur.execute(query)
         self.con.commit()
         return True
 
+    # todo %s
     def editUser(self, user_id, email, psw=None):
         """Изменение данных о пользователе: пароль, почта"""
         query = f"UPDATE users SET email = '{email}' where id = '{user_id}';"
@@ -227,22 +230,23 @@ class Database:
         """Изменение аватарки профиля"""
         if not avatar:
             return False
-        self.cur.execute(f"UPDATE users SET profile = '{avatar}' where id = {user_id}")
+        query = 'UPDATE users SET profile = %s where id = %s', (avatar, user_id)
+        self.cur.execute(*query)
         self.con.commit()
         return True
 
     def deleteUserAvatar(self, get_id):
         """Удаление аватара профиля"""
-        query = f"SELECT profile FROM users WHERE id = '{get_id}'"
-        self.cur.execute(query)
+        query = 'SELECT profile FROM users where id = %s', (get_id,)
+        self.cur.execute(*query)
         filename = self.prepare_data(self.cur.fetchall())[0]
         if filename['profile']:
             return filename['profile']
 
     def changeUserCategory(self, id_user_to_change, new_category):
         """Изменение категории пользователя"""
-        query = f"UPDATE users SET category = '{new_category}' where id={id_user_to_change}"
-        self.cur.execute(query)
+        query = 'UPDATE users SET category = %s where id=%s', (id_user_to_change, new_category)
+        self.cur.execute(*query)
         self.con.commit()
 
     def makeOrder(self, user_id, products, address):
@@ -255,30 +259,30 @@ class Database:
             id_products.append(product['id'])
             sum_products = sum_products + product['count'] * product['price']
         query = f"INSERT INTO orders (user_id, sum_products, time_now, address, number_order) " \
-                f"VALUES ('{user_id}', '{sum_products}', '{now}', '{address}', '{number}')"
-        self.cur.execute(query)
+                'VALUES (%s,%s,%s,%s,)', (user_id, sum_products, now, address, number)
+        self.cur.execute(*query)
         self.con.commit()
-        query_again = f"SELECT id FROM orders WHERE number_order = '{number}'"
-        self.cur.execute(query_again)
+        query_again = 'SELECT id FROM orders WHERE number_order = %s', (number,)
+        self.cur.execute(*query_again)
         order_id = self.prepare_data(self.cur.fetchall())[0]['id']
         print(order_id)
         for product in products:
-            query = f"INSERT INTO products_ordered (order_id, product_id, count_product) " \
-                    f"VALUES ('{order_id}', '{product['id']}', '{product['count']}')"
-            self.cur.execute(query)
+            query = 'INSERT INTO products_ordered (order_id, product_id, count_product)' \
+                    'VALUES (%s, %s, %s)', (order_id, product['id'], product['count'])
+            self.cur.execute(*query)
             self.con.commit()
         for product in products:
-            query = f"SELECT count_product from products where id = '{product['id']}'"
-            self.cur.execute(query)
+            query = 'SELECT count_product from products where id = %s', (product['id'],)
+            self.cur.execute(*query)
             count = self.prepare_data(self.cur.fetchall())[0]['count_product']
-            query = f"UPDATE products SET count_product = '{count - product['count']}' where id = '{product['id']}'"
-            self.cur.execute(query)
+            query = f"UPDATE products SET count_product = '{count - product['count']}' where id = %s", (product['id'],)
+            self.cur.execute(*query)
             self.con.commit()
 
     def getOrdersById(self, user_id):
         """Получение инфомрации о заказе по id"""
-        query = f"SELECT * from orders where user_id = '{user_id}'"
-        self.cur.execute(query)
+        query = 'SELECT * from orders where user_id = %s', (user_id, )
+        self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())
         print(res)
         if not res:
@@ -288,8 +292,8 @@ class Database:
 
     def getOrderByNumber(self, num):
         """Получение инфомрации о заказе по numder"""
-        query = f"SELECT * from orders where number_order = '{num}'"
-        self.cur.execute(query)
+        query = 'SELECT * from orders where number_order = %s', (num,)
+        self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())[0]
         print(res)
         if not res:
@@ -299,8 +303,8 @@ class Database:
 
     def getProductsIdByOrderId(self, order_id):
         """Получение айди продуктов из заказа order_id"""
-        query = f"SELECT * from products_ordered where order_id = '{order_id}'"
-        self.cur.execute(query)
+        query = 'SELECT * from products_ordered where order_id = %s', (order_id,)
+        self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())
         print(res)
         if not res:
