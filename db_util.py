@@ -245,9 +245,10 @@ class Database:
 
     def changeUserCategory(self, id_user_to_change, new_category):
         """Изменение категории пользователя"""
-        query = 'UPDATE users SET category = %s where id=%s', (id_user_to_change, new_category)
+        query = 'UPDATE users SET category = %s where id=%s', (new_category, id_user_to_change)
         self.cur.execute(*query)
         self.con.commit()
+        print('Успешно')
 
     def makeOrder(self, user_id, products, address):
         """Создание заказа"""

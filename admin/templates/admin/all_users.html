@@ -53,8 +53,8 @@
                 <td>{{ user.category }}</td>
                 <td>
                     {% if user.id != current_user_id %}
-                        <form method="post">
-                            <button name="change_category" value="{{ user.id }}">
+                        <form method="post" action="{{ url_for('.all_users_page') }}">
+                            <button name="change_category" value="{{user.id}}">
                                 Сменить категорию
                             </button>
                         </form>

@@ -146,15 +146,18 @@ def add_product_page():
 
 @admin.route("/all_users", methods=['POST', 'GET'])
 def all_users_page():
+    print('Я тут')
     if not isLogged():
         return redirect(url_for('.login'))
     if request.method == 'POST':
+        print('Пост запрос получил')
         id_user_to_change = request.form.get('change_category')
         user = db.getUser(id_user_to_change)
         if user['category'] == 1:
             new_category = 2
         else:
             new_category = 1
+        print(id_user_to_change, new_category)
         db.changeUserCategory(id_user_to_change, new_category)
     users = db.getUsers()
     categories = db.getCategories()
