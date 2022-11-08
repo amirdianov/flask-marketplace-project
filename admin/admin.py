@@ -66,9 +66,12 @@ def logout():
 def detail_product_page(product_id):
     if not isLogged():
         return redirect(url_for('.login'))
-    product = db.getProductById(product_id)
-    return render_template('admin/view_product_admin.html', product=product)
+    if db.getProductById(product_id):
+        product = db.getProductById(product_id)
 
+        return render_template('admin/view_product_admin.html', product=product)
+    flash('Такого товара не существует', 'error')
+    return redirect(url_for('.all_products_page'))
 
 @admin.route('/productphoto/<int:product_id>')
 def product_photo(product_id):
@@ -118,14 +121,16 @@ def add_product_page():
         if not request.form.get('change'):
             file = form.image.data
             filename = secure_filename(file.filename)
-            file.save(os.path.join(IMG + UPLOAD_FOLDER, 'products/', filename))
 
             res = db.add_edit_Product('add', form.product_name.data, form.price.data, form.text_info.data,
                                       os.path.join(UPLOAD_FOLDER, 'products/', filename), form.category.data,
                                       form.count.data)
-            if not res:
-                flash("Ошибка добавления", "error")
-            flash("Товар добавлен", "success")
+            if res:
+                flash("Товар добавлен", "success")
+                file.save(os.path.join(IMG + UPLOAD_FOLDER, 'products/', filename))
+
+            flash("Ошибка добавления", "error")
+
             return redirect(url_for('.all_products_page'))
         elif request.form.get('change'):
             file = form.image.data

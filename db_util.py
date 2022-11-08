@@ -132,21 +132,27 @@ class Database:
                          product_id=None):
         """Добавление, изменение продуктов"""
         if type_operation == 'add':
-            query = 'INSERT INTO products (product_name, price, text_info, image_path, category, count_product)' \
-                    'VALUES (%s,%s,%s,%s,%s,%s)', (product_name, price, text_info, image_path, category, count_product)
-            self.cur.execute(*query)
-            self.con.commit()
-            return True
+            try:
+                query = 'INSERT INTO products (product_name, price, text_info, image_path, category, count_product)' \
+                        'VALUES (%s,%s,%s,%s,%s,%s)', (product_name, price, text_info, image_path, category, count_product)
+                self.cur.execute(*query)
+                self.con.commit()
+                return True
+            except:
+                return False
         else:
-            query = f"UPDATE products SET product_name = '{product_name}' where id = {product_id};" \
-                    f"UPDATE products SET price = '{price}' where id = {product_id};" \
-                    f"UPDATE products SET text_info = '{text_info}' where id = {product_id};" \
-                    f"UPDATE products SET image_path = '{image_path}' where id = {product_id};" \
-                    f"UPDATE products SET category = '{category}' where id = {product_id};" \
-                    f"UPDATE products SET count_product = '{count_product}' where id = {product_id};"
-            self.cur.execute(query)
-            self.con.commit()
-            return True
+            try:
+                query = f"UPDATE products SET product_name = '{product_name}' where id = {product_id};" \
+                        f"UPDATE products SET price = '{price}' where id = {product_id};" \
+                        f"UPDATE products SET text_info = '{text_info}' where id = {product_id};" \
+                        f"UPDATE products SET image_path = '{image_path}' where id = {product_id};" \
+                        f"UPDATE products SET category = '{category}' where id = {product_id};" \
+                        f"UPDATE products SET count_product = '{count_product}' where id = {product_id};"
+                self.cur.execute(query)
+                self.con.commit()
+                return True
+            except:
+                return False
 
     def deleteProductById(self, product_id):
         """Удаление продукта, в случае нехватки его на складе"""
