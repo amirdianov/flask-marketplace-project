@@ -74,17 +74,25 @@ class Database:
         """Выведение всех продуктов по определенынм критериям"""
         if cat and search:
             query = f"SELECT * FROM products where " \
-                    f"category='{cat}' and count_product > 0 and (product_name LIKE '%{search}%' or text_info LIKE '%{search}%' order by id asc)"
+                    f"category= {cat} and count_product > 0 and " \
+                    f"(product_name LIKE '%{search}%' or " \
+                    f"text_info LIKE '%{search}%') order by id asc "
+            self.cur.execute(query)
+
         elif cat:
-            query = f"SELECT * FROM products where " \
-                    f"category='{cat}'and count_product > 0 order by id asc"
+            query = 'SELECT * FROM products where ' \
+                    'category= %s and count_product > 0 order by id asc', (cat,)
+            self.cur.execute(*query)
+
         elif search:
             query = f"SELECT * FROM products where count_product > 0  and " \
                     f"(product_name LIKE '%{search}%' or text_info LIKE '%{search}%') order by id asc"
+            self.cur.execute(query)
+
         else:
             query = f"SELECT * FROM products where count_product > 0 order by id asc"
+            self.cur.execute(query)
 
-        self.cur.execute(query)
         res = self.prepare_data(self.cur.fetchall())
         if res:
             return res
@@ -97,7 +105,7 @@ class Database:
         res = self.prepare_data(self.cur.fetchall())
         if res:
             return res[0]
-        return []
+        return False
 
     def getCategories(self):
         """Получение категорий для селектора - фильтрация продуктов"""
@@ -167,7 +175,7 @@ class Database:
 
     def getUsers(self):
         """Список всех пользователей """
-        query = f"SELECT * FROM users"
+        query = f"SELECT * FROM users order by id DESC"
         self.cur.execute(query)
         res = self.prepare_data(self.cur.fetchall())
         if not res:
@@ -219,12 +227,21 @@ class Database:
     # todo %s
     def editUser(self, user_id, email, psw=None):
         """Изменение данных о пользователе: пароль, почта"""
-        query = f"UPDATE users SET email = '{email}' where id = '{user_id}';"
-        if psw:
-            query += f"UPDATE users SET password = '{psw}' where id = '{user_id}';"
-        self.cur.execute(query)
-        self.con.commit()
-        return True
+        try:
+            query = f"UPDATE users SET email = '{email}' where id = '{user_id}';"
+            self.cur.execute(query)
+            self.con.commit()
+            if psw:
+                try:
+                    query = f"UPDATE users SET password = '{psw}' where id = '{user_id}';"
+                    self.cur.execute(query)
+                    self.con.commit()
+                except:
+                    return False
+
+            return True
+        except:
+            return False
 
     def updateUserAvatar(self, avatar, user_id):
         """Изменение аватарки профиля"""
@@ -248,7 +265,6 @@ class Database:
         query = 'UPDATE users SET category = %s where id=%s', (new_category, id_user_to_change)
         self.cur.execute(*query)
         self.con.commit()
-        print('Успешно')
 
     def makeOrder(self, user_id, products, address):
         """Создание заказа"""
@@ -282,7 +298,7 @@ class Database:
 
     def getOrdersById(self, user_id):
         """Получение инфомрации о заказе по id"""
-        query = 'SELECT * from orders where user_id = %s', (user_id, )
+        query = 'SELECT * from orders where user_id = %s', (user_id,)
         self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())
         print(res)
@@ -292,15 +308,14 @@ class Database:
         return res
 
     def getOrderByNumber(self, num):
-        """Получение инфомрации о заказе по numder"""
+        """Получение информации о заказе по numder"""
         query = 'SELECT * from orders where number_order = %s', (num,)
         self.cur.execute(*query)
-        res = self.prepare_data(self.cur.fetchall())[0]
-        print(res)
+        res = self.prepare_data(self.cur.fetchall())
         if not res:
             print('Нет такого')
             return False
-        return res
+        return res[0]
 
     def getProductsIdByOrderId(self, order_id):
         """Получение айди продуктов из заказа order_id"""

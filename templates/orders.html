@@ -42,6 +42,9 @@
     <a class="nav-link" href={{ url_for('logout') }}>Выйти</a>
 {% endblock %}
 {% block content %}
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+    {% endfor %}
     <table style=";border: 3px groove #7c6ec5;width: 100%;margin-top: 10px">
         <tr>
             <th>Номер заказа</th>

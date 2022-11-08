@@ -19,13 +19,17 @@
 }
 
 .flash.success {
+    margin-top: 7px;
     border: 1px solid #21DB56;
     background: #AEFFC5;
+    border-radius: 10px;
 }
 
 .flash.error {
+    margin-top: 7px;
     border: 1px solid #FF4343;
     background: #FF9C9C;
+    border-radius: 10px;
 }
 
 .form-control-login {

@@ -43,6 +43,8 @@ def login():
         try:
             if db.getUsersCategory(request.form['email'], request.form['password']) == 1:
                 login_admin(db.getUserByEmail(request.form['email'])['id'])
+                flash(f'Вы вошли в админ-панель', 'success')
+
                 return redirect(url_for('.index'))
             else:
                 flash('Неверные имя или пароль для админки', 'error')
@@ -56,6 +58,7 @@ def logout():
     if not isLogged():
         return redirect(url_for('.login'))
     logout_admin()
+    flash('Вы вышли из админ панели', 'success')
     return redirect(url_for('.login'))
 
 

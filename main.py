@@ -1,4 +1,5 @@
 import os
+import time
 
 from flask import Flask, render_template, request, url_for, redirect, make_response, session, flash
 from db_util import Database, UserLogin
@@ -37,7 +38,6 @@ def main_page_all():
               'category_selected_id': int(cat) if cat else None,
               'search': search if search else ''}
     if request.method == 'POST':
-        print(request.form)
         if request.form.get('backet_go'):
             if not check_session('backet'):
                 make_session('backet')
@@ -67,11 +67,9 @@ def make_session(name, current_user_id=None):
 
 def check_session(name, current_user_id=None):
     """Проверяет, создана ли корзина (избранное)"""
-    print(session['saved'])
     if name == 'saved':
         if f'{name}' in session.keys():
             for user in session['saved'].keys():
-                print(user, current_user_id)
                 if user == current_user_id:
                     return True
             else:
@@ -205,6 +203,7 @@ def backet():
 
 
 @app.route("/saved", methods=["POST", "GET"])
+@login_required
 def saved_page():
     """Страница избранных"""
     if request.form.get('saved_out'):
@@ -237,6 +236,7 @@ def saved_page():
 
 
 @app.route('/orders', methods=['GET', 'POST'])
+@login_required
 def orders_page():
     """Страница заказов внутри пользователя"""
     orders = db.getOrdersById(current_user.get_id())
@@ -248,21 +248,26 @@ def orders_page():
 
 
 @app.route('/orders/<int:num>', methods=['GET', 'POST'])
+@login_required
 def order_info_page(num):
     """Информация о заказе пользователя"""
-    ans = db.getOrderByNumber(num)
-    order_id = ans['id']
-    products_info = db.getProductsIdByOrderId(order_id)
-    products = []
-    count_all_products = 0
-    for element in products_info:
-        count_all_products += element['count_product']
-        product_special = db.getProductById(element['product_id'])
-        product = {'product_name': product_special['product_name'], 'product_count': element['count_product'],
-                   'summary': product_special['price'] * element['count_product'], 'id': element['product_id']}
-        products.append(product)
-    return render_template('view_order.html', products=products, summary_order=ans['sum_products'],
-                           count_order=count_all_products)
+    if db.getOrderByNumber(num):
+        ans = db.getOrderByNumber(num)
+        order_id = ans['id']
+        products_info = db.getProductsIdByOrderId(order_id)
+        products = []
+        count_all_products = 0
+        for element in products_info:
+            count_all_products += element['count_product']
+            product_special = db.getProductById(element['product_id'])
+            product = {'product_name': product_special['product_name'], 'product_count': element['count_product'],
+                       'summary': product_special['price'] * element['count_product'], 'id': element['product_id']}
+            products.append(product)
+        return render_template('view_order.html', products=products, summary_order=ans['sum_products'],
+                               count_order=count_all_products)
+    else:
+        flash('Данного заказа не существует', 'error')
+        return redirect(url_for('orders_page'))
 
 
 # Страница регистрации, если пользователь успешно регистрируется,
@@ -281,7 +286,7 @@ def registration_page():
             flash("Вы успешно зарегистрированы", "success")
             return redirect(url_for('login_page'))
         else:
-            flash("Ошибка при добавлении в БД", "error")
+            flash("Ошибка, такой пользователь уже существует", "error")
     return render_template("registration.html", title="Регистрация", form=form)
 
 
@@ -297,6 +302,7 @@ def login_page():
             userlogin = UserLogin().create(user)
             rm = form.remember.data
             login_user(userlogin, remember=rm)
+            flash(f'Вы вошли в аккаунт {form.email.data}', 'success')
             return redirect(request.args.get("next") or url_for("profile_page"))
         else:
             flash("Неверная пара логин/пароль", "error")
@@ -326,6 +332,7 @@ def profile_page():
     """Страница профиля пользователя с картинкой и полями"""
     form = ProfileForm()
     if form.validate_on_submit():
+        time.sleep(5)
         session.pop('_flashes', None)
         if form.password.data:
             hash = generate_password_hash(form.password.data)
@@ -338,6 +345,7 @@ def profile_page():
             return redirect(url_for('login_page'))
         else:
             flash("Ошибка при добавлении в БД", "error")
+            return redirect(url_for('profile_page'))
     backet_flag = None
     if check_session('backet'):
         if len(session['backet']):
@@ -389,13 +397,17 @@ def upload_avatar():
 def detail_product_page(product_id):
     """Детальный просмотр конкретного товара"""
     product = db.getProductById(product_id)
-    backet_flag = None
-    if check_session('backet'):
-        if len(session['backet']):
-            backet_flag = True
-        else:
-            backet_flag = False
-    return render_template('view_product.html', product=product, backet=backet_flag)
+    if product:
+        backet_flag = None
+        if check_session('backet'):
+            if len(session['backet']):
+                backet_flag = True
+            else:
+                backet_flag = False
+        return render_template('view_product.html', product=product, backet=backet_flag)
+    else:
+        flash('Такого товара не существует', 'error')
+        return redirect(url_for('main_page_all'))
 
 
 @app.errorhandler(404)
