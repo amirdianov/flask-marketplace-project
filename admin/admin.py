@@ -73,6 +73,7 @@ def detail_product_page(product_id):
     flash('Такого товара не существует', 'error')
     return redirect(url_for('.all_products_page'))
 
+
 @admin.route('/productphoto/<int:product_id>')
 def product_photo(product_id):
     img = db.getPhoto(product_id)

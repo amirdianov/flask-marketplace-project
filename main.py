@@ -37,23 +37,36 @@ def main_page_all():
               'categories': db.getCategories(),
               'category_selected_id': int(cat) if cat else None,
               'search': search if search else ''}
-    if request.method == 'POST':
-        if request.form.get('backet_go'):
-            if not check_session('backet'):
-                make_session('backet')
-            if check_count_product(request.form['backet_go']):
-                add_product_session('backet', request.form['backet_go'])
-        elif request.form.get('saved_go'):
-            if not check_session('saved', current_user_id=current_user.get_id()):
-                make_session('saved', current_user_id=current_user.get_id())
-            add_product_session('saved', request.form['saved_go'])
-    backet_flag = None
-    if check_session('backet'):
-        if len(session['backet']):
-            backet_flag = True
-        else:
-            backet_flag = False
-    return render_template('main.html', title='Главная страница', **params, backet=backet_flag)
+    # if request.method == 'POST':
+    #     if request.form.get('backet_go'):
+    #         if not check_session('backet'):
+    #             make_session('backet')
+    #         if check_count_product(request.form['backet_go']):
+    #             add_product_session('backet', request.form['backet_go'])
+    #     elif request.form.get('saved_go'):
+    #         if not check_session('saved', current_user_id=current_user.get_id()):
+    #             make_session('saved', current_user_id=current_user.get_id())
+    #         add_product_session('saved', request.form['saved_go'])
+
+    return render_template('main.html', title='Главная страница', **params)
+
+
+@app.route('/go_to_session', methods=['GET', 'POST'])
+def go_to_session():
+    name = request.form['name']
+    product_id = request.form['id']
+    print(name)
+    print(product_id)
+    if name == ('backet_go'):
+        if not check_session('backet'):
+            make_session('backet')
+        if check_count_product(product_id):
+            add_product_session('backet', product_id)
+    elif name == ('saved_go'):
+        if not check_session('saved', current_user_id=current_user.get_id()):
+            make_session('saved', current_user_id=current_user.get_id())
+        add_product_session('saved', product_id)
+    return {'name': 'hello', 'id': product_id}
 
 
 def make_session(name, current_user_id=None):
