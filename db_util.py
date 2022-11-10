@@ -100,8 +100,9 @@ class Database:
 
     def getProductById(self, product_id):
         """Получение продукта по ID"""
-        query = 'SELECT * FROM products where id= %s', (product_id,)
-        self.cur.execute(*query)
+        print(product_id)
+        query = f'SELECT * FROM products where id= {product_id}'
+        self.cur.execute(query)
         res = self.prepare_data(self.cur.fetchall())
         if res:
             return res[0]
@@ -282,7 +283,7 @@ class Database:
             id_products.append(product['id'])
             sum_products = sum_products + product['count'] * product['price']
         query = f"INSERT INTO orders (user_id, sum_products, time_now, address, number_order) " \
-                'VALUES (%s,%s,%s,%s,)', (user_id, sum_products, now, address, number)
+                'VALUES (%s,%s,%s,%s,%s)', (user_id, sum_products, now, address, number)
         self.cur.execute(*query)
         self.con.commit()
         query_again = 'SELECT id FROM orders WHERE number_order = %s', (number,)

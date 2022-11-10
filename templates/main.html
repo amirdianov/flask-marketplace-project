@@ -93,6 +93,7 @@
                                         name="backet_go">В корзину
                                 </button>
                                 <button class="btn btn-outline-info button-saved" id="button_saved"
+                                        value="{{ p.id }}"
                                         name="saved_go">В избранное
                                 </button>
                                 <!-- скрипт для подключения JQuery -->
@@ -115,7 +116,7 @@
                     dataType: 'html', // тип данных// данные запроса (в данном случае, там находятся GET-параметры)d
                     data: {
                         'id': $(this).val(),
-                        'name': 'backet_go'
+                        'name': $(this).attr("name")
                     },
                     // функция, которая вызывается при успешном получении данных
                     success: function (smt) {
@@ -126,6 +127,4 @@
             })
         </script>
     </div>
-
-    {#    <a href="{{ url_for('admin.index') }}">Админ-панель</a></p>#}
 {% endblock %}
