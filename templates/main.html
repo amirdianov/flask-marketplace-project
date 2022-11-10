@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block nav %}
-    <a class="nav-link active" aria-current="page" href={{ url_for('main_page_all') }}>Главная
+    <a class="nav-link active" aria-current="page" href={{ url_for('main_page_all') }}
+            xmlns="http://www.w3.org/1999/html">Главная
         страница</a>
     {% if  current_user.is_authenticated %}
         <li class="nav-item dropdown">
@@ -67,35 +68,58 @@
                             <hr>
                             Цена - {{ p.price }}р
                         </h5>
-                        </a>
                         <p class="card-text">{{ p.text_info[0:200] }}...</p>
-                        <p id="texting{{ p.id }}"></p>
+                        {#                        <button>+</button>#}
+                        {#                        <button id="minus"></button>#}
                         <br>
-
+                        <br>
                         {% if  current_user.is_authenticated %}
-                            <div class="buttons" style="position: absolute; bottom: 5px; ">
-                                {#                                <form action="{{ url_for('main_page_all') }}" method="POST">#}
-                                {#                                    <button class="btn btn-outline-light button-backet" id="button_backet"#}
-                                {#                                            name="backet_go"#}
-                                {#                                            value="{{ p.id }}"#}
-                                {#                                            type="submit">В корзину#}
-                                {#                                    </button>#}
-                                {#                                </form>#}
-                                {#                                <form action="{{ url_for('main_page_all') }}" method="POST">#}
-                                {#                                    <button type="submit" id="button_saved" name="saved_go"#}
-                                {#                                            class="btn btn-outline-info button-saved" value="{{ p.id }}"#}
-                                {#                                            style="margin-top: 5px">В#}
-                                {#                                        избранное#}
-                                {#                                    </button>#}
-                                {#                                </form>#}
-                                <button class="btn btn-outline-light button-backet" id="button_backet"
-                                        value="{{ p.id }}"
-                                        name="backet_go">В корзину
-                                </button>
-                                <button class="btn btn-outline-info button-saved" id="button_saved"
-                                        value="{{ p.id }}"
-                                        name="saved_go">В избранное
-                                </button>
+                            <div class="buttons">
+                                {% if p.id in users_products.keys() %}
+                                    <div style="position: absolute; bottom: 5px; ">
+                                        <button id="button_change_count" class="btn btn-outline-info button-backet plus"
+                                                name="button_plus{{ p.id }}"
+                                                value="{{ p.id }}">+
+                                        </button>
+                                        <b id="texting{{ p.id }}">{{ users_products[p.id] }}</b>
+                                        <button id="button_change_count"
+                                                class="btn btn-outline-info button-backet minus"
+                                                name="button_minus{{ p.id }}"
+                                                value="{{ p.id }}">-
+                                        </button>
+
+                                        <button type="submit" id="button_saved" name="saved_go"
+                                                class="btn btn-outline-info button-saved" value="{{ p.id }}"
+                                                style="margin-top: 5px">В
+                                            избранное
+                                        </button>
+                                        <br>
+                                    </div>
+                                {% else %}
+                                    <div style="position: absolute; bottom: 5px; ">
+                                        <form action="{{ url_for('main_page_all') }}" method="POST">
+                                            <button class="btn btn-outline-light button-backet" id="button_backet"
+                                                    name="backet_go"
+                                                    value="{{ p.id }}"
+                                                    type="submit">В корзину
+                                            </button>
+                                            <button type="submit" id="button_saved" name="saved_go"
+                                                    class="btn btn-outline-info button-saved" value="{{ p.id }}"
+                                                    style="margin-top: 5px">В
+                                                избранное
+                                            </button>
+                                        </form>
+                                    </div>
+                                {% endif %}
+
+                                {#                                <button class="btn btn-outline-light button-backet" id="button_backet"#}
+                                {#                                        value="{{ p.id }}"#}
+                                {#                                        name="backet_go">В корзину#}
+                                {#                                </button>#}
+                                {#                                <button class="btn btn-outline-info button-saved" id="button_saved"#}
+                                {#                                        value="{{ p.id }}"#}
+                                {#                                        name="saved_go">В избранное#}
+                                {#                                </button>#}
                                 <!-- скрипт для подключения JQuery -->
 
                             </div>
@@ -107,7 +131,7 @@
         <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
         <script>
             // функция, которая выполняется при клике на кнопку
-            $('button').on('click', function () {
+            $('.plus, .minus').on('click', function () {
                 // обрабатывае  м полученные данные с инпутов
                 // ajax-запрос
                 $.ajax({
@@ -121,7 +145,11 @@
                     // функция, которая вызывается при успешном получении данных
                     success: function (smt) {
                         smt = JSON.parse(smt)
-                        $('#texting' + smt['id']).html(smt['name'])
+                        if (smt['count'] === false) {
+                            window.location.href = "http://127.0.0.1:5000"
+                        } else {
+                            $('#texting' + smt['id']).html(smt['count'])
+                        }
                     }
                 })
             })
