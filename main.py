@@ -62,14 +62,24 @@ def go_to_session():
     product_id = request.form['id']
 
     count = False
+    saved_go = False
+    saved_out = False
     if 'button_plus' in name:
         count = change_plus_backet(product_id)
     elif 'button_minus' in name:
         count = change_minus_backet(product_id)
-    # print(count)
+    elif 'saved_go' in request.form['class'].split(' ')[-1]:
+        add_product_session('saved', product_id)
+        count = True
+        saved_go = True
+    elif 'saved_out' in request.form['class'].split(' ')[-1]:
+        count = True
+        delete_product_session('saved', product_id, current_user.get_id())
+        saved_out = True
+    print(request.form['class'])
     print('Отработал аякс запрос')
-    print(session['backet'][current_user.get_id()])
-    return {'count': count, 'id': product_id}
+    print({'count': count, 'id': product_id, 'saved_go': saved_go, 'saved_out': saved_out})
+    return {'count': count, 'id': product_id, 'saved_go': saved_go, 'saved_out': saved_out}
 
 
 def make_session(name, current_user_id=None):

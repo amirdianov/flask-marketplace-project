@@ -81,15 +81,15 @@
                                                 name="button_plus{{ p.id }}"
                                                 value="{{ p.id }}">+
                                         </button>
-                                        <b id="texting{{ p.id }}">{{ users_products[p.id] }}</b>
+                                        <b id="texting{{ p.id }}">{{ users_products[p.id] }}шт</b>
                                         <button id="button_change_count"
                                                 class="btn btn-outline-info button-backet minus"
                                                 name="button_minus{{ p.id }}"
                                                 value="{{ p.id }}">-
                                         </button>
 
-                                        <button type="submit" id="button_saved" name="saved_go"
-                                                class="btn btn-outline-info button-saved" value="{{ p.id }}"
+                                        <button type="submit" id="saved{{ p.id }}" name="saved{{ p.id }}"
+                                                class="btn btn-outline-info button-saved saved_go" value="{{ p.id }}"
                                                 style="margin-top: 5px">В
                                             избранное
                                         </button>
@@ -103,12 +103,13 @@
                                                     value="{{ p.id }}"
                                                     type="submit">В корзину
                                             </button>
-                                            <button type="submit" id="button_saved" name="saved_go"
-                                                    class="btn btn-outline-info button-saved" value="{{ p.id }}"
-                                                    style="margin-top: 5px">В
-                                                избранное
-                                            </button>
                                         </form>
+                                        <button id="saved{{ p.id }}" type="submit" name="saved{{ p.id }}"
+                                                class="btn btn-outline-info button-saved saved_go" value="{{ p.id }}"
+                                                style="margin-top: 5px">В
+                                            избранное
+                                        </button>
+
                                     </div>
                                 {% endif %}
 
@@ -131,7 +132,7 @@
         <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
         <script>
             // функция, которая выполняется при клике на кнопку
-            $('.plus, .minus').on('click', function () {
+            $('.plus, .minus, .saved_go, .saved_out').on('click', function () {
                 // обрабатывае  м полученные данные с инпутов
                 // ajax-запрос
                 $.ajax({
@@ -140,16 +141,23 @@
                     dataType: 'html', // тип данных// данные запроса (в данном случае, там находятся GET-параметры)d
                     data: {
                         'id': $(this).val(),
-                        'name': $(this).attr("name")
+                        'name': $(this).attr("name"),
+                        'class': $(this).attr("class")
                     },
                     // функция, которая вызывается при успешном получении данных
                     success: function (smt) {
                         smt = JSON.parse(smt)
                         if (smt['count'] === false) {
                             window.location.href = "http://127.0.0.1:5000"
+                        } else if (smt['saved_go'] === true) {
+                            $('#saved' + smt['id']).attr("class", 'saved_out');
+                        } else if (smt['saved_out'] === true) {
+                            $('#saved' + smt['id']).attr("class", 'btn btn-outline-info button-saved saved_go');
                         } else {
-                            $('#texting' + smt['id']).html(smt['count'])
+                            $('#texting' + smt['id']).html(smt['count'] + 'шт')
+
                         }
+
                     }
                 })
             })
