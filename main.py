@@ -55,6 +55,24 @@ def main_page_all():
     return render_template('main.html', title='Главная страница', **params)
 
 
+@app.route('/ajax_button_backet', methods=['GET', 'POST'])
+def ajax_button_backet():
+    """ajax запрос для обработки добавления товара в корзину"""
+    name = request.form['name']
+    product_id = request.form['id']
+    if name == 'backet_go':
+        add_product_session('backet', product_id)
+        return {'make_two_buttons': True, 'id': product_id}
+    elif 'button_plus' in name:
+        count = change_plus_backet(product_id)
+        print({'make_two_buttons': False, 'id': product_id, 'count': count})
+        return {'make_two_buttons': False, 'id': product_id, 'count': count}
+    elif 'button_minus' in name:
+        count = change_minus_backet(product_id)
+        print({'make_two_buttons': False, 'id': product_id, 'count': count})
+        return {'make_two_buttons': False, 'id': product_id, 'count': count}
+
+
 @app.route('/go_to_session', methods=['GET', 'POST'])
 def go_to_session():
     """Метод для ajax запроса при нажатии на кнопки в корзину или в избранное"""
@@ -76,7 +94,9 @@ def go_to_session():
         count = True
         delete_product_session('saved', product_id, current_user.get_id())
         saved_out = True
-    print(request.form['class'])
+    elif 'backet_go' in name:
+        if check_count_product(product_id):
+            add_product_session('backet', product_id)
     print('Отработал аякс запрос')
     print({'count': count, 'id': product_id, 'saved_go': saved_go, 'saved_out': saved_out})
     return {'count': count, 'id': product_id, 'saved_go': saved_go, 'saved_out': saved_out}
@@ -157,7 +177,6 @@ def change_plus_backet(product_id):
             if product['count'] + 1 > ans['count_product']:
                 flash('Больше таких товаров нет на складе', 'error')
                 return product['count']
-
             else:
                 product['count'] += 1
                 session.modified = True

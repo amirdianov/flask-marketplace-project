@@ -74,54 +74,52 @@
                         <br>
                         <br>
                         {% if  current_user.is_authenticated %}
-                            <div class="buttons">
-                                {% if p.id in users_products.keys() %}
-                                    <div style="position: absolute; bottom: 5px; ">
-                                        <button id="button_change_count" class="btn btn-outline-info button-backet plus"
-                                                name="button_plus{{ p.id }}"
-                                                value="{{ p.id }}">+
-                                        </button>
-                                        <b id="texting{{ p.id }}">{{ users_products[p.id] }}шт</b>
-                                        <button id="button_change_count"
-                                                class="btn btn-outline-info button-backet minus"
-                                                name="button_minus{{ p.id }}"
-                                                value="{{ p.id }}">-
-                                        </button>
-
-                                        <button type="submit" id="saved{{ p.id }}" name="saved{{ p.id }}"
-                                                class="btn btn-outline-info button-saved saved_go" value="{{ p.id }}"
-                                                style="margin-top: 5px">В
-                                            избранное
-                                        </button>
-                                        <br>
-                                    </div>
+                            <div class="buttons" style="position: absolute; bottom: 5px; ">
+                                {% if p.id in users_products %}
+                                    <button id="button_change_plus{{ p.id }}"
+                                            class="btn btn-outline-info button-backet plus"
+                                            name="button_plus{{ p.id }}"
+                                            value="{{ p.id }}">+
+                                    </button>
+                                    <b id="texting{{ p.id }}">{{ users_products[p.id] }}шт</b>
+                                    <button id="button_change_minus{{ p.id }}"
+                                            class="btn btn-outline-info button-backet minus"
+                                            name="button_minus{{ p.id }}"
+                                            value="{{ p.id }}">-
+                                    </button>
+                                    <button class="btn btn-outline-light button-backet"
+                                            id="button_backet{{ p.id }}"
+                                            name="backet_go"
+                                            value="{{ p.id }}"
+                                            type="submit" style="display: none">В корзину
+                                    </button>
+                                    <button id="saved{{ p.id }}" type="submit" name="saved"
+                                            class="btn btn-outline-info button-saved saved_go"
+                                            value="{{ p.id }}">В избранное
+                                    </button>
                                 {% else %}
-                                    <div style="position: absolute; bottom: 5px; ">
-                                        <form action="{{ url_for('main_page_all') }}" method="POST">
-                                            <button class="btn btn-outline-light button-backet" id="button_backet"
-                                                    name="backet_go"
-                                                    value="{{ p.id }}"
-                                                    type="submit">В корзину
-                                            </button>
-                                        </form>
-                                        <button id="saved{{ p.id }}" type="submit" name="saved{{ p.id }}"
-                                                class="btn btn-outline-info button-saved saved_go" value="{{ p.id }}"
-                                                style="margin-top: 5px">В
-                                            избранное
-                                        </button>
-
-                                    </div>
+                                    <button id="button_change_plus{{ p.id }}"
+                                            class="btn btn-outline-info button-backet plus"
+                                            name="button_plus{{ p.id }}"
+                                            value="{{ p.id }}" style="display:none;">+
+                                    </button>
+                                    <b id="texting{{ p.id }}" style="display:none;">{{ users_products[p.id] }}шт</b>
+                                    <button id="button_change_minus{{ p.id }}"
+                                            class="btn btn-outline-info button-backet minus"
+                                            name="button_minus{{ p.id }}"
+                                            value="{{ p.id }}" style="display:none;">-
+                                    </button>
+                                    <button class="btn btn-outline-light button-backet"
+                                            id="button_backet{{ p.id }}"
+                                            name="backet_go"
+                                            value="{{ p.id }}"
+                                            type="submit">В корзину
+                                    </button>
+                                    <button id="saved{{ p.id }}" type="submit" name="saved"
+                                            class="btn btn-outline-info button-saved saved_go"
+                                            value="{{ p.id }}">В избранное
+                                    </button>
                                 {% endif %}
-
-                                {#                                <button class="btn btn-outline-light button-backet" id="button_backet"#}
-                                {#                                        value="{{ p.id }}"#}
-                                {#                                        name="backet_go">В корзину#}
-                                {#                                </button>#}
-                                {#                                <button class="btn btn-outline-info button-saved" id="button_saved"#}
-                                {#                                        value="{{ p.id }}"#}
-                                {#                                        name="saved_go">В избранное#}
-                                {#                                </button>#}
-                                <!-- скрипт для подключения JQuery -->
 
                             </div>
                         {% endif %}
@@ -131,36 +129,73 @@
         {% endfor %}
         <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
         <script>
-            // функция, которая выполняется при клике на кнопку
-            $('.plus, .minus, .saved_go, .saved_out').on('click', function () {
-                // обрабатывае  м полученные данные с инпутов
-                // ajax-запрос
+            $('.plus, .minus, .button-backet').on('click', function () {
                 $.ajax({
-                    url: '{{ url_for('go_to_session') }}', // добавляем url, откуда будем брать данные
-                    method: 'post', // указываем метод
-                    dataType: 'html', // тип данных// данные запроса (в данном случае, там находятся GET-параметры)d
+                    url: '{{ url_for('ajax_button_backet') }}',
+                    method: 'post',
+                    dataType: 'html',
                     data: {
                         'id': $(this).val(),
                         'name': $(this).attr("name"),
-                        'class': $(this).attr("class")
                     },
-                    // функция, которая вызывается при успешном получении данных
                     success: function (smt) {
                         smt = JSON.parse(smt)
-                        if (smt['count'] === false) {
-                            window.location.href = "http://127.0.0.1:5000"
-                        } else if (smt['saved_go'] === true) {
-                            $('#saved' + smt['id']).attr("class", 'saved_out');
-                        } else if (smt['saved_out'] === true) {
-                            $('#saved' + smt['id']).attr("class", 'btn btn-outline-info button-saved saved_go');
+                        if (smt['make_two_buttons'] === true) {
+                            document.getElementById('button_backet' + smt['id']).style.display = "none";
+                            document.getElementById('button_change_plus' + smt['id']).style.display = "";
+                            document.getElementById('button_change_minus' + smt['id']).style.display = "";
+                            document.getElementById('texting' + smt['id']).style.display = ""
+                            $('#texting' + smt['id']).html(1 + 'шт')
+
                         } else {
-                            $('#texting' + smt['id']).html(smt['count'] + 'шт')
-
+                            if (smt['count'] === false) {
+                                document.getElementById('button_backet' + smt['id']).style.display = "";
+                                document.getElementById('button_change_plus' + smt['id']).style.display = "none";
+                                document.getElementById('button_change_minus' + smt['id']).style.display = "none";
+                                document.getElementById('texting' + smt['id']).style.display = "none"
+                            } else {
+                                $('#texting' + smt['id']).html(smt['count'] + 'шт')
+                            }
                         }
-
                     }
                 })
             })
+            // функция, которая выполняется при клике на кнопку
+            {#$('.plus, .minus, .saved_go, .saved_out, .button-backet').on('click', function () {#}
+            {#    // обрабатывае  м полученные данные с инпутов#}
+            {#    // ajax-запрос#}
+            {#    $.ajax({#}
+            {#        url: '{{ url_for('go_to_session') }}', // добавляем url, откуда будем брать данные#}
+            {#        method: 'post', // указываем метод#}
+            {#        dataType: 'html', // тип данных// данные запроса (в данном случае, там находятся GET-параметры)d#}
+            {#        data: {#}
+            {#            'id': $(this).val(),#}
+            {#            'name': $(this).attr("name"),#}
+            {#            'class': $(this).attr("class")#}
+            {#        },#}
+            {#        // функция, которая вызывается при успешном получении данных#}
+            {#        success: function (smt) {#}
+            {#            smt = JSON.parse(smt)#}
+            {#            if (smt['count'] === false) {#}
+            {#window.location.href = "http://127.0.0.1:5000"#}
+            {#                document.getElementById('button_backet' + smt['id']).style.display = "none";#}
+            {#                document.getElementById('button_change_plus' + smt['id']).style.display = "";#}
+            {#                document.getElementById('button_change_minus' + smt['id']).style.display = "";#}
+            {#                document.getElementById('texting' + smt['id']).style.display = ""#}
+            {#                $('#texting' + smt['id']).html(1 + 'шт')#}
+            {##}
+            {#            } else if (smt['saved_go'] === true) {#}
+            {#                $('#saved' + smt['id']).attr("class", 'saved_out');#}
+            {#            } else if (smt['saved_out'] === true) {#}
+            {#                $('#saved' + smt['id']).attr("class", 'btn btn-outline-info button-saved saved_go');#}
+            {#            } else {#}
+            {#                $('#texting' + smt['id']).html(smt['count'] + 'шт')#}
+            {#            }#}
+            {##}
+            {#        }#}
+            {#    })#}
+            {#})
+            #}
         </script>
     </div>
 {% endblock %}
