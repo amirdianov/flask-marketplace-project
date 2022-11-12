@@ -151,12 +151,9 @@ def add_product_session(name, product_id):
     elif name == 'saved':
         for product in session['saved'][current_user.get_id()]:
             if product['product_name'] == ans['product_name']:
-                flash('Такой товар уже есть в избранном', 'error')
                 return
         session['saved'][current_user.get_id()] += [ans]
         session.modified = True
-
-        flash('Товар успешно добавлен в избранное', 'success')
 
 
 def delete_session(name):
@@ -200,8 +197,7 @@ def delete_product_session(name, product_id, current_user_id=None):
         if product['product_name'] == ans['product_name']:
             session[name][current_user_id].remove(product)
             session.modified = True
-            flash("Товар удален", "success")
-
+            # flash("Товар удален", "success")
 
 @app.route('/backet', methods=['GET', 'POST'])
 @login_required
