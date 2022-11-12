@@ -41,17 +41,22 @@ def main_page_all():
     cat = request.args.get('category')
     search = request.args.get('search')
     users_products = {}
-    print(session['backet'][current_user.get_id()])
+    users_saved_prodcuts = []
     if check_session('backet', current_user_id=current_user.get_id()):
         for element in session['backet'][current_user.get_id()]:
             users_products[element['id']] = element['count']
+    if check_session('saved', current_user_id=current_user.get_id()):
+        for element in session['saved'][current_user.get_id()]:
+            users_saved_prodcuts.append(element['id'])
+
     params = {'products': db.getProducts(cat, search),
               'categories': db.getCategories(),
               'category_selected_id': int(cat) if cat else None,
               'search': search if search else '',
-              'users_products': users_products
+              'users_products': users_products,
+              'users_saved_prodcuts': users_saved_prodcuts,
               }
-    print(users_products)
+    print(users_saved_prodcuts)
     return render_template('main.html', title='Главная страница', **params)
 
 
@@ -73,33 +78,23 @@ def ajax_button_backet():
         return {'make_two_buttons': False, 'id': product_id, 'count': count}
 
 
-@app.route('/go_to_session', methods=['GET', 'POST'])
-def go_to_session():
+@app.route('/ajax_button_saved', methods=['GET', 'POST'])
+def ajax_button_saved():
     """Метод для ajax запроса при нажатии на кнопки в корзину или в избранное"""
     name = request.form['name']
     product_id = request.form['id']
 
-    count = False
     saved_go = False
     saved_out = False
-    if 'button_plus' in name:
-        count = change_plus_backet(product_id)
-    elif 'button_minus' in name:
-        count = change_minus_backet(product_id)
-    elif 'saved_go' in request.form['class'].split(' ')[-1]:
+    if 'saved_go' in request.form['class'].split(' ')[-1]:
         add_product_session('saved', product_id)
         count = True
         saved_go = True
     elif 'saved_out' in request.form['class'].split(' ')[-1]:
-        count = True
         delete_product_session('saved', product_id, current_user.get_id())
         saved_out = True
-    elif 'backet_go' in name:
-        if check_count_product(product_id):
-            add_product_session('backet', product_id)
     print('Отработал аякс запрос')
-    print({'count': count, 'id': product_id, 'saved_go': saved_go, 'saved_out': saved_out})
-    return {'count': count, 'id': product_id, 'saved_go': saved_go, 'saved_out': saved_out}
+    return {'id': product_id, 'saved_go': saved_go, 'saved_out': saved_out}
 
 
 def make_session(name, current_user_id=None):

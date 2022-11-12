@@ -69,8 +69,6 @@
                             Цена - {{ p.price }}р
                         </h5>
                         <p class="card-text">{{ p.text_info[0:200] }}...</p>
-                        {#                        <button>+</button>#}
-                        {#                        <button id="minus"></button>#}
                         <br>
                         <br>
                         {% if  current_user.is_authenticated %}
@@ -93,10 +91,17 @@
                                             value="{{ p.id }}"
                                             type="submit" style="display: none">В корзину
                                     </button>
-                                    <button id="saved{{ p.id }}" type="submit" name="saved"
-                                            class="btn btn-outline-info button-saved saved_go"
-                                            value="{{ p.id }}">В избранное
-                                    </button>
+                                    {% if p.id not in users_saved_prodcuts %}
+                                        <button id="saved{{ p.id }}" type="submit" name="saved"
+                                                class="btn btn-outline-info button-saved saved_go"
+                                                value="{{ p.id }}">В избранное
+                                        </button>
+                                    {% else %}
+                                        <button id="saved{{ p.id }}" type="submit" name="saved"
+                                                class="saved_out"
+                                                value="{{ p.id }}">В избранное
+                                        </button>
+                                    {% endif %}
                                 {% else %}
                                     <button id="button_change_plus{{ p.id }}"
                                             class="btn btn-outline-info button-backet plus"
@@ -115,10 +120,17 @@
                                             value="{{ p.id }}"
                                             type="submit">В корзину
                                     </button>
-                                    <button id="saved{{ p.id }}" type="submit" name="saved"
-                                            class="btn btn-outline-info button-saved saved_go"
-                                            value="{{ p.id }}">В избранное
-                                    </button>
+                                    {% if p.id not in users_saved_prodcuts %}
+                                        <button id="saved{{ p.id }}" type="submit" name="saved"
+                                                class="btn btn-outline-info button-saved saved_go"
+                                                value="{{ p.id }}">В избранное
+                                        </button>
+                                    {% else %}
+                                        <button id="saved{{ p.id }}" type="submit" name="saved"
+                                                class="saved_out"
+                                                value="{{ p.id }}">В избранное
+                                        </button>
+                                    {% endif %}
                                 {% endif %}
 
                             </div>
@@ -160,42 +172,26 @@
                     }
                 })
             })
-            // функция, которая выполняется при клике на кнопку
-            {#$('.plus, .minus, .saved_go, .saved_out, .button-backet').on('click', function () {#}
-            {#    // обрабатывае  м полученные данные с инпутов#}
-            {#    // ajax-запрос#}
-            {#    $.ajax({#}
-            {#        url: '{{ url_for('go_to_session') }}', // добавляем url, откуда будем брать данные#}
-            {#        method: 'post', // указываем метод#}
-            {#        dataType: 'html', // тип данных// данные запроса (в данном случае, там находятся GET-параметры)d#}
-            {#        data: {#}
-            {#            'id': $(this).val(),#}
-            {#            'name': $(this).attr("name"),#}
-            {#            'class': $(this).attr("class")#}
-            {#        },#}
-            {#        // функция, которая вызывается при успешном получении данных#}
-            {#        success: function (smt) {#}
-            {#            smt = JSON.parse(smt)#}
-            {#            if (smt['count'] === false) {#}
-            {#window.location.href = "http://127.0.0.1:5000"#}
-            {#                document.getElementById('button_backet' + smt['id']).style.display = "none";#}
-            {#                document.getElementById('button_change_plus' + smt['id']).style.display = "";#}
-            {#                document.getElementById('button_change_minus' + smt['id']).style.display = "";#}
-            {#                document.getElementById('texting' + smt['id']).style.display = ""#}
-            {#                $('#texting' + smt['id']).html(1 + 'шт')#}
-            {##}
-            {#            } else if (smt['saved_go'] === true) {#}
-            {#                $('#saved' + smt['id']).attr("class", 'saved_out');#}
-            {#            } else if (smt['saved_out'] === true) {#}
-            {#                $('#saved' + smt['id']).attr("class", 'btn btn-outline-info button-saved saved_go');#}
-            {#            } else {#}
-            {#                $('#texting' + smt['id']).html(smt['count'] + 'шт')#}
-            {#            }#}
-            {##}
-            {#        }#}
-            {#    })#}
-            {#})
-            #}
+            $('.saved_go, .saved_out').on('click', function () {
+                $.ajax({
+                    url: '{{ url_for('ajax_button_saved') }}',
+                    method: 'post',
+                    dataType: 'html',
+                    data: {
+                        'id': $(this).val(),
+                        'name': $(this).attr("name"),
+                        'class': $(this).attr("class")
+                    },
+                    success: function (smt) {
+                        smt = JSON.parse(smt)
+                        if (smt['saved_go'] === true) {
+                            $('#saved' + smt['id']).attr("class", 'saved_out');
+                        } else if (smt['saved_out'] === true) {
+                            $('#saved' + smt['id']).attr("class", 'btn btn-outline-info button-saved saved_go');
+                        }
+                    }
+                })
+            })
         </script>
     </div>
 {% endblock %}
