@@ -97,6 +97,21 @@ def ajax_button_saved():
     return {'id': product_id, 'saved_go': saved_go, 'saved_out': saved_out}
 
 
+
+@app.route('/ajax_button_in_backet', methods=['GET', 'POST'])
+def ajax_button_in_backet():
+    name = request.form['name']
+    product_id = request.form['id']
+    if 'button_plus' in name:
+        count = change_plus_backet(product_id)
+        print(count, 'plus')
+        return {'id': product_id, 'count': count}
+    elif 'button_minus' in name:
+        count = change_minus_backet(product_id)
+        print(count, 'minus')
+        return {'id': product_id, 'count': count}
+
+
 def make_session(name, current_user_id=None):
     """Создает корзину (избранное), в момент первого входа пользователя на сайт"""
     session[name][current_user_id] = []
@@ -198,6 +213,7 @@ def delete_product_session(name, product_id, current_user_id=None):
             session[name][current_user_id].remove(product)
             session.modified = True
             # flash("Товар удален", "success")
+
 
 @app.route('/backet', methods=['GET', 'POST'])
 @login_required

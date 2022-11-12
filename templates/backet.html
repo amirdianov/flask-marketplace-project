@@ -38,24 +38,25 @@
                                                                                      height="70"
                                                                                      width="90">
                                 </p>
-                                <form method="post" action="">
-                                    <button class="btn btn-outline-info button-backet" name="button_plus"
-                                            value="{{ i.id }}">+
-                                    </button>
-                                    <button class="btn btn-outline-info button-backet" name="button_minus"
-                                            value="{{ i.id }}">-
-                                    </button>
-                                    <b>{{ i.count }}шт</b>
-                                    <br>
-                                    <hr style="width: 70%">
-                                    <b>Цена: {{ i.price * i.count }}р </b>
-                                    <hr style="width: 70%;   border: 3px groove #7a52c9;">
+                                {#                                <form method="post" action="">#}
+                                <button class="button-backet-small plus" name="button_plus{{ i.id }}"
+                                        value="{{ i.id }}">+
+                                </button>
+                                <b id="texting{{ i.id }}">{{ i.count }}шт</b>
+                                <button class="button-backet-small minus" name="button_minus{{ i.id }}"
+                                        value="{{ i.id }}">-
+                                </button>
 
-                                </form>
+                                <br>
+                                <hr style="width: 70%">
+                                <b>Цена: {{ i.price * i.count }}р </b>
+                                <hr style="width: 70%;   border: 3px groove #7a52c9;">
+
+                                {#                                </form>#}
                             </li>
                             <form method="post" action="">
-                                <button class="btn btn-outline-info button-backet" name="button_delete"
-                                        value="{{ i.id }}">Удалить из
+                                <button class="button-backet" name="button_delete"
+                                        value="{{ i.id }}" style="width: 200px;">Удалить из
                                     корзины
                                 </button>
                             </form>
@@ -85,8 +86,8 @@
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}
-                                <button class="btn btn-outline-info button-backet" name="order"
-                                        value="Оформление заказа">Оформить заказ
+                                <button class="button-backet" name="order"
+                                        value="Оформление заказа" style="width: 200px">Оформить заказ
                                 </button>
                             </div>
                         </div>
@@ -95,4 +96,26 @@
             </td>
         </tr>
     </table>
+    <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+    <script>
+        $('.plus, .minus').on('click', function () {
+            $.ajax({
+                url: '{{ url_for('ajax_button_in_backet') }}',
+                method: 'post',
+                dataType: 'html',
+                data: {
+                    'id': $(this).val(),
+                    'name': $(this).attr("name"),
+                },
+                success: function (smt) {
+                    smt = JSON.parse(smt)
+                    if (smt['count'] === false) {
+                        window.location.href = "http://127.0.0.1:5000/backet"
+                    } else {
+                        $('#texting' + smt['id']).html(smt['count'] + 'шт')
+                    }
+                }
+            })
+        })
+    </script>
 {% endblock %}

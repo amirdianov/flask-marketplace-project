@@ -193,8 +193,8 @@ body {
 }
 
 .button-saved:hover {
-    box-shadow: 0 0 10px 0 #c570ff inset, 0 0 10px 4px #c570ff;
-    background-color: #c570ff;
+    box-shadow: 0 0 10px 0 #8a57c0 inset, 0 0 10px 4px #8a57c0;
+    background-color: #8a57c0;
 }
 
 .saved_out {
@@ -209,8 +209,8 @@ body {
 }
 
 .saved_out:hover {
-    box-shadow: 0 0 10px 0 #8a57c0 inset, 0 0 10px 4px #8a57c0;
-    background-color: #8a57c0;
+    box-shadow: 0 0 10px 0 #c570ff inset, 0 0 10px 4px #c570ff;
+    background-color: #c570ff;
 }
 
 .button-backet {
