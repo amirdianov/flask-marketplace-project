@@ -41,10 +41,10 @@ def main_page_all():
     cat = request.args.get('category')
     search = request.args.get('search')
     users_products = {}
-    users_saved_prodcuts = []
     if check_session('backet', current_user_id=current_user.get_id()):
         for element in session['backet'][current_user.get_id()]:
             users_products[element['id']] = element['count']
+    users_saved_prodcuts = []
     if check_session('saved', current_user_id=current_user.get_id()):
         for element in session['saved'][current_user.get_id()]:
             users_saved_prodcuts.append(element['id'])
@@ -65,6 +65,7 @@ def ajax_button_backet():
     """ajax запрос для обработки добавления товара в корзину"""
     name = request.form['name']
     product_id = request.form['id']
+    print('Сработал')
     if name == 'backet_go':
         add_product_session('backet', product_id)
         return {'make_two_buttons': True, 'id': product_id}
@@ -97,9 +98,9 @@ def ajax_button_saved():
     return {'id': product_id, 'saved_go': saved_go, 'saved_out': saved_out}
 
 
-
 @app.route('/ajax_button_in_backet', methods=['GET', 'POST'])
 def ajax_button_in_backet():
+    """Метод ajax для страницы корзины"""
     name = request.form['name']
     product_id = request.form['id']
     if 'button_plus' in name:
@@ -110,6 +111,14 @@ def ajax_button_in_backet():
         count = change_minus_backet(product_id)
         print(count, 'minus')
         return {'id': product_id, 'count': count}
+
+
+@app.route('/ajax_button_in_saved', methods=['GET', 'POST'])
+def ajax_button_in_saved():
+    name = request.form['name']
+    product_id = request.form['id']
+    delete_product_session('saved', product_id, current_user_id=current_user.get_id())
+    return {'ans': True}
 
 
 def make_session(name, current_user_id=None):
@@ -169,6 +178,8 @@ def add_product_session(name, product_id):
                 return
         session['saved'][current_user.get_id()] += [ans]
         session.modified = True
+    print(session['saved'][current_user.get_id()])
+    print(len(session['saved'][current_user.get_id()]))
 
 
 def delete_session(name):
@@ -272,7 +283,13 @@ def saved_page():
     else:
         flash("Избранное пусто", "error")
         return redirect(url_for('main_page_all'))
-    return render_template('saved.html', products=session['saved'][current_user.get_id()], backet=backet_flag)
+    users_products = {}
+    if check_session('backet', current_user_id=current_user.get_id()):
+        for element in session['backet'][current_user.get_id()]:
+            users_products[element['id']] = element['count']
+    print(len(session['saved'][current_user.get_id()]))
+    return render_template('saved.html', products=session['saved'][current_user.get_id()], backet=backet_flag,
+                           users_products=users_products)
 
 
 @app.route('/orders', methods=['GET', 'POST'])
