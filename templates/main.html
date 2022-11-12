@@ -75,17 +75,17 @@
                             <div class="buttons" style="position: absolute; bottom: 5px; ">
                                 {% if p.id in users_products %}
                                     <button id="button_change_plus{{ p.id }}"
-                                            class="btn btn-outline-info button-backet plus"
+                                            class="button-backet-small plus"
                                             name="button_plus{{ p.id }}"
                                             value="{{ p.id }}">+
                                     </button>
                                     <b id="texting{{ p.id }}">{{ users_products[p.id] }}шт</b>
                                     <button id="button_change_minus{{ p.id }}"
-                                            class="btn btn-outline-info button-backet minus"
+                                            class="button-backet-small minus"
                                             name="button_minus{{ p.id }}"
                                             value="{{ p.id }}">-
                                     </button>
-                                    <button class="btn btn-outline-light button-backet"
+                                    <button class="button-backet"
                                             id="button_backet{{ p.id }}"
                                             name="backet_go"
                                             value="{{ p.id }}"
@@ -93,28 +93,30 @@
                                     </button>
                                     {% if p.id not in users_saved_prodcuts %}
                                         <button id="saved{{ p.id }}" type="submit" name="saved"
-                                                class="btn btn-outline-info button-saved saved_go"
-                                                value="{{ p.id }}">В избранное
+                                                class="button-saved saved_go"
+                                                value="{{ p.id }}"><span id="texting_saved{{ p.id }}">В избранное</span>
+
                                         </button>
                                     {% else %}
                                         <button id="saved{{ p.id }}" type="submit" name="saved"
                                                 class="saved_out"
-                                                value="{{ p.id }}">В избранное
+                                                value="{{ p.id }}"><span id="texting_saved{{ p.id }}">Понравилось</span>
+
                                         </button>
                                     {% endif %}
                                 {% else %}
                                     <button id="button_change_plus{{ p.id }}"
-                                            class="btn btn-outline-info button-backet plus"
+                                            class="button-backet-small plus"
                                             name="button_plus{{ p.id }}"
                                             value="{{ p.id }}" style="display:none;">+
                                     </button>
                                     <b id="texting{{ p.id }}" style="display:none;">{{ users_products[p.id] }}шт</b>
                                     <button id="button_change_minus{{ p.id }}"
-                                            class="btn btn-outline-info button-backet minus"
+                                            class="button-backet-small minus"
                                             name="button_minus{{ p.id }}"
                                             value="{{ p.id }}" style="display:none;">-
                                     </button>
-                                    <button class="btn btn-outline-light button-backet"
+                                    <button class=" button-backet"
                                             id="button_backet{{ p.id }}"
                                             name="backet_go"
                                             value="{{ p.id }}"
@@ -122,13 +124,15 @@
                                     </button>
                                     {% if p.id not in users_saved_prodcuts %}
                                         <button id="saved{{ p.id }}" type="submit" name="saved"
-                                                class="btn btn-outline-info button-saved saved_go"
-                                                value="{{ p.id }}">В избранное
+                                                class="button-saved saved_go"
+                                                value="{{ p.id }}"><span id="texting_saved{{ p.id }}">В избранное</span>
+
                                         </button>
                                     {% else %}
                                         <button id="saved{{ p.id }}" type="submit" name="saved"
                                                 class="saved_out"
-                                                value="{{ p.id }}">В избранное
+                                                value="{{ p.id }}"><span id="texting_saved{{ p.id }}">Понравилось</span>
+
                                         </button>
                                     {% endif %}
                                 {% endif %}
@@ -186,8 +190,12 @@
                         smt = JSON.parse(smt)
                         if (smt['saved_go'] === true) {
                             $('#saved' + smt['id']).attr("class", 'saved_out');
+                            $('#texting_saved' + smt['id']).html('Понравилось')
+
                         } else if (smt['saved_out'] === true) {
-                            $('#saved' + smt['id']).attr("class", 'btn btn-outline-info button-saved saved_go');
+                            $('#saved' + smt['id']).attr("class", 'button-saved saved_go');
+                            $('#texting_saved' + smt['id']).html('В избранное')
+
                         }
                     }
                 })
