@@ -57,9 +57,9 @@
                                             {% if field.name == 'email' %}
                                                 {{ field(class='input100 input-registration-login invalid', placeholder='Email') }}
                                             {% elif field.name == 'password' %}
-                                                {{ field(class='input100 input-registration-login invalid', placeholder='Password') }}
+                                                {{ field(class='input100 input-registration-login invalid', placeholder='New password') }}
                                             {% elif field.name == 'password2' %}
-                                                {{ field(class='input100 input-registration-login invalid', placeholder='Again password') }}
+                                                {{ field(class='input100 input-registration-login invalid', placeholder='New again password') }}
                                             {% endif %}
                                             <span class="invalid-answer">
                                 {% for e in field.errors %}
@@ -74,12 +74,12 @@
                                             {% elif field.name == 'password' %}
 
                                                 <div class="line-form">
-                                                    {{ field(class='input100 input-registration-login', placeholder='Password') }}
+                                                    {{ field(class='input100 input-registration-login', placeholder='New password') }}
                                                 </div>
                                             {% elif field.name == 'password2' %}
 
                                                 <div class="line-form">
-                                                    {{ field(class='input100 input-registration-login', placeholder='Again password') }}
+                                                    {{ field(class='input100 input-registration-login', placeholder='New again password') }}
                                                 </div>
                                             {% endif %}
                                         {% endif %}

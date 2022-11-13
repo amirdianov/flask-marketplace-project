@@ -30,8 +30,8 @@ app.register_blueprint(admin, url_prefix='/admin')
 @app.route('/', methods=['GET', 'POST'])
 def main_page_all():
     """Главная страница доступна всем пользователям"""
-    # delete_saved()
-
+    # delete_session('saved')
+    # make_session('saved', current_user_id=current_user.get_id())
     if request.method == 'POST':
         if request.form.get('backet_go'):
             if check_count_product(request.form['backet_go']):
@@ -46,7 +46,9 @@ def main_page_all():
             users_products[element['id']] = element['count']
     users_saved_prodcuts = []
     if check_session('saved', current_user_id=current_user.get_id()):
+        print(session['saved'][current_user.get_id()])
         for element in session['saved'][current_user.get_id()]:
+            print(element)
             users_saved_prodcuts.append(element['id'])
 
     params = {'products': db.getProducts(cat, search),
@@ -66,17 +68,22 @@ def ajax_button_backet():
     name = request.form['name']
     product_id = request.form['id']
     print('Сработал')
+    # print(request.form['left'])
     if name == 'backet_go':
         add_product_session('backet', product_id)
-        return {'make_two_buttons': True, 'id': product_id}
+        return {'make_two_buttons': True, 'id': product_id, 'left': db.getProductById(product_id)['count_product'] - 1}
     elif 'button_plus' in name:
         count = change_plus_backet(product_id)
         print({'make_two_buttons': False, 'id': product_id, 'count': count})
-        return {'make_two_buttons': False, 'id': product_id, 'count': count}
+        return {'make_two_buttons': False, 'id': product_id, 'count': count,
+                'left': db.getProductById(product_id)['count_product'] - count}
     elif 'button_minus' in name:
         count = change_minus_backet(product_id)
         print({'make_two_buttons': False, 'id': product_id, 'count': count})
-        return {'make_two_buttons': False, 'id': product_id, 'count': count}
+        ans = db.getProductById(product_id)['count_product'] - count if count != False else \
+        db.getProductById(product_id)['count_product']
+        return {'make_two_buttons': False, 'id': product_id, 'count': count,
+                'left': ans}
 
 
 @app.route('/ajax_button_saved', methods=['GET', 'POST'])
@@ -141,15 +148,16 @@ def check_session(name, current_user_id=None):
     else:
         session[name] = {}
         session.modified = True
+        return False
 
 
 def check_count_product(product_id):
     """Проверяет можно ли добавить продукт по кнопке (в корзину с главной странцы)"""
     ans = db.getProductById(product_id)
     for product in session['backet'][current_user.get_id()]:
-        if product['product_name'] == ans['product_name']:
+        if product['id'] == ans['id']:
             if product['count'] + 1 > ans['count_product']:
-                flash('Больше таких товаров нет на складе', 'error')
+                # flash('Больше таких товаров нет на складе', 'error')
                 return False
             else:
                 return True
@@ -162,21 +170,22 @@ def add_product_session(name, product_id):
     flag = False
     if name == 'backet':
         for product in session['backet'][current_user.get_id()]:
-            if product['product_name'] == ans['product_name']:
+            if product['id'] == ans['id']:
                 product['count'] += 1
                 flag = True
                 session.modified = True
                 return product['count']
         if not flag:
-            ans['count'] = 1
+            ans = {'id': ans['id'], 'count': 1}
+            # ans['count'] = 1
             session['backet'][current_user.get_id()] += [ans]
             session.modified = True
             return
     elif name == 'saved':
         for product in session['saved'][current_user.get_id()]:
-            if product['product_name'] == ans['product_name']:
+            if product['id'] == ans['id']:
                 return
-        session['saved'][current_user.get_id()] += [ans]
+        session['saved'][current_user.get_id()] += [{'id': ans['id']}]
         session.modified = True
     print(session['saved'][current_user.get_id()])
     print(len(session['saved'][current_user.get_id()]))
@@ -191,9 +200,9 @@ def change_plus_backet(product_id):
     """Увеличение количества продуктов +"""
     ans = db.getProductById(product_id)
     for product in session['backet'][current_user.get_id()]:
-        if product['product_name'] == ans['product_name']:
+        if product['id'] == ans['id']:
             if product['count'] + 1 > ans['count_product']:
-                flash('Больше таких товаров нет на складе', 'error')
+                # flash('Больше таких товаров нет на складе', 'error')
                 return product['count']
             else:
                 product['count'] += 1
@@ -206,7 +215,7 @@ def change_minus_backet(product_id):
     ans = db.getProductById(product_id)
     print('Минусую')
     for product in session['backet'][current_user.get_id()]:
-        if product['product_name'] == ans['product_name']:
+        if product['id'] == ans['id']:
             product['count'] -= 1
             if product['count'] == 0:
                 session['backet'][current_user.get_id()].remove(product)
@@ -220,7 +229,7 @@ def delete_product_session(name, product_id, current_user_id=None):
     """# Удаление продукта из корзины (избранного)"""
     ans = db.getProductById(product_id)
     for product in session[name][current_user_id]:
-        if product['product_name'] == ans['product_name']:
+        if product['id'] == ans['id']:
             session[name][current_user_id].remove(product)
             session.modified = True
             # flash("Товар удален", "success")
@@ -253,7 +262,13 @@ def backet():
     else:
         flash("Корзина пуста", "error")
         return redirect(url_for('main_page_all'))
-    return render_template('backet.html', products=session['backet'][current_user.get_id()], form=form,
+    products = []
+    for elem in db.getProducts(None, None):
+        for product in session['backet'][current_user.get_id()]:
+            if elem['id'] == product['id']:
+                elem['count'] = product['count']
+                products.append(elem)
+    return render_template('backet.html', products=products, form=form,
                            backet=backet_flag)
 
 
@@ -288,7 +303,12 @@ def saved_page():
         for element in session['backet'][current_user.get_id()]:
             users_products[element['id']] = element['count']
     print(len(session['saved'][current_user.get_id()]))
-    return render_template('saved.html', products=session['saved'][current_user.get_id()], backet=backet_flag,
+    products = []
+    for elem in db.getProducts(None, None):
+        for product in session['saved'][current_user.get_id()]:
+            if elem['id'] == product['id']:
+                products.append(elem)
+    return render_template('saved.html', products=products, backet=backet_flag,
                            users_products=users_products)
 
 

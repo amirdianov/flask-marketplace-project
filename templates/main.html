@@ -69,17 +69,23 @@
                             Цена - {{ p.price }}р
                         </h5>
                         <p class="card-text">{{ p.text_info[0:200] }}...</p>
+                        <hr>
                         <br>
                         <br>
                         {% if  current_user.is_authenticated %}
                             <div class="buttons" style="position: absolute; bottom: 5px; ">
+                                {% if p.count_product <=5 %}
+                                    <small><b style="color: #7569b0" id="left{{ p.id }}"
+                                              class="left">Осталось {{ p.count_product }}шт</b></small>
+                                {% endif %}
+                                <br>
                                 {% if p.id in users_products %}
                                     <button id="button_change_plus{{ p.id }}"
                                             class="button-backet-small plus"
                                             name="button_plus{{ p.id }}"
                                             value="{{ p.id }}">+
                                     </button>
-                                    <b id="texting{{ p.id }}">{{ users_products[p.id] }}шт</b>
+                                    <b id="texting{{ p.id }}" style="color: #7569b0">{{ users_products[p.id] }}шт</b>
                                     <button id="button_change_minus{{ p.id }}"
                                             class="button-backet-small minus"
                                             name="button_minus{{ p.id }}"
@@ -161,16 +167,20 @@
                             document.getElementById('button_change_plus' + smt['id']).style.display = "";
                             document.getElementById('button_change_minus' + smt['id']).style.display = "";
                             document.getElementById('texting' + smt['id']).style.display = ""
+                            document.getElementById('texting' + smt['id']).style.color = "#7569b0"
                             $('#texting' + smt['id']).html(1 + 'шт')
-
+                            $('#left' + smt['id']).html('Осталось ' + smt['left'] + 'шт')
                         } else {
                             if (smt['count'] === false) {
                                 document.getElementById('button_backet' + smt['id']).style.display = "";
                                 document.getElementById('button_change_plus' + smt['id']).style.display = "none";
                                 document.getElementById('button_change_minus' + smt['id']).style.display = "none";
                                 document.getElementById('texting' + smt['id']).style.display = "none"
+                                $('#left' + smt['id']).html('Осталось ' + smt['left'] + 'шт')
+
                             } else {
                                 $('#texting' + smt['id']).html(smt['count'] + 'шт')
+                                $('#left' + smt['id']).html('Осталось ' + smt['left'] + 'шт')
                             }
                         }
                     }
