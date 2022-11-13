@@ -49,7 +49,16 @@
 
                                 <br>
                                 <hr style="width: 70%">
-                                <b>Цена: {{ i.price * i.count }}р </b>
+                                <b id="price{{ i.id }}">Цена: {{ i.price * i.count }}р </b>
+                                {#                                {% if i.count_product <=5 %}#}
+                                {% if i.id in users_products.keys() %}
+                                    <small><b style="color: #7569b0" id="left{{ i.id }}"
+                                              class="left">Осталось {{ i.count_product - users_products[i.id] }}шт</b></small>
+                                {% else %}
+                                    <small><b style="color: #7569b0" id="left{{ i.id }}"
+                                              class="left">Осталось {{ i.count_product }}шт</b></small>
+                                {% endif %}
+                                {#                                {% endif %}#}
                                 <hr style="width: 70%;   border: 3px groove #7a52c9;">
 
                                 {#                                </form>#}
@@ -62,6 +71,8 @@
                             </form>
                             <hr style="width: 70%;">
                         {% endfor %}
+                        <div><h5><b id="itog"
+                                    class="itog">Итог: {{ itog }}р</b></h5></div>
                     </ol>
                 </div>
             </td>
@@ -113,6 +124,9 @@
                         window.location.href = "http://127.0.0.1:5000/backet"
                     } else {
                         $('#texting' + smt['id']).html(smt['count'] + 'шт')
+                        $('#left' + smt['id']).html('Осталось ' + smt['left'] + 'шт')
+                        $('#price' + smt['id']).html('Цена: ' + smt['price'] + 'р')
+                        $('#itog').html('Итог: ' + smt['itog'] + 'р')
                     }
                 }
             })

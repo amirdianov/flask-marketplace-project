@@ -81,7 +81,7 @@ def ajax_button_backet():
         count = change_minus_backet(product_id)
         print({'make_two_buttons': False, 'id': product_id, 'count': count})
         ans = db.getProductById(product_id)['count_product'] - count if count != False else \
-        db.getProductById(product_id)['count_product']
+            db.getProductById(product_id)['count_product']
         return {'make_two_buttons': False, 'id': product_id, 'count': count,
                 'left': ans}
 
@@ -110,14 +110,27 @@ def ajax_button_in_backet():
     """Метод ajax для страницы корзины"""
     name = request.form['name']
     product_id = request.form['id']
+    itog = 0
     if 'button_plus' in name:
         count = change_plus_backet(product_id)
-        print(count, 'plus')
-        return {'id': product_id, 'count': count}
+        print(session['backet'][current_user.get_id()])
+
+        for product in session['backet'][current_user.get_id()]:
+            itog += db.getProductById(product['id'])['price'] * product['count']
+        print(itog)
+        return {'id': product_id, 'count': count,
+                'left': db.getProductById(product_id)['count_product'] - count,
+                'price': count * db.getProductById(product_id)['price'], 'itog': itog}
     elif 'button_minus' in name:
         count = change_minus_backet(product_id)
-        print(count, 'minus')
-        return {'id': product_id, 'count': count}
+        print(session['backet'][current_user.get_id()])
+        for product in session['backet'][current_user.get_id()]:
+            itog += db.getProductById(product['id'])['price'] * product['count']
+        ans = db.getProductById(product_id)['count_product'] - count if count != False else \
+            db.getProductById(product_id)['count_product']
+        print(itog)
+        return {'id': product_id, 'count': count, 'left': ans,
+                'price': count * db.getProductById(product_id)['price'], 'itog': itog}
 
 
 @app.route('/ajax_button_in_saved', methods=['GET', 'POST'])
@@ -248,7 +261,13 @@ def backet():
         elif request.form.get('button_delete'):
             delete_product_session('backet', request.form.get('button_delete'), current_user_id=current_user.get_id())
         elif request.form.get('order'):
-            db.makeOrder(current_user.get_id(), session['backet'][current_user.get_id()], request.form.get('address'))
+            products = []
+            for element in db.getProducts(None, None):
+                for product in session['backet'][current_user.get_id()]:
+                    if element['id'] == product['id']:
+                        element['count'] = product['count']
+                        products.append(element)
+            db.makeOrder(current_user.get_id(), products, request.form.get('address'))
             delete_session('backet')
             flash('Заказ успешно создан', 'success')
             return redirect(url_for('main_page_all'))
@@ -268,8 +287,15 @@ def backet():
             if elem['id'] == product['id']:
                 elem['count'] = product['count']
                 products.append(elem)
+    users_products = {}
+    if check_session('backet', current_user_id=current_user.get_id()):
+        for element in session['backet'][current_user.get_id()]:
+            users_products[element['id']] = element['count']
+    itog = 0
+    for product in session['backet'][current_user.get_id()]:
+        itog += db.getProductById(product['id'])['price'] * product['count']
     return render_template('backet.html', products=products, form=form,
-                           backet=backet_flag)
+                           backet=backet_flag, users_products=users_products, itog=itog)
 
 
 @app.route("/saved", methods=["POST", "GET"])
