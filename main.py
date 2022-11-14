@@ -19,7 +19,7 @@ login_manager.login_view = 'login_page'
 login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
 
 # Для максимального объема хранения данных
-MAX_CONTENT_LENGTH = 1024 * 1024
+MAX_CONTENT_LENGTH = 640 * 480
 UPLOAD_FOLDER = 'static/media/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 

@@ -40,7 +40,7 @@ class UserLogin(UserMixin):
             with app.open_resource(app.root_path + url_for('static', filename='media/profiles/default_avatar.png'),
                                    'rb') as f:
                 img = f.read()
-                print(img)
+                # print(img)
         else:
             img = self.__user['profile']
             with app.open_resource(app.root_path + url_for('static', filename=f'media/profiles/{img}'),
@@ -100,7 +100,7 @@ class Database:
 
     def getProductById(self, product_id):
         """Получение продукта по ID"""
-        print(product_id)
+        # print(product_id)
         query = f'SELECT * FROM products where id= {product_id}'
         self.cur.execute(query)
         res = self.prepare_data(self.cur.fetchall())
@@ -206,12 +206,12 @@ class Database:
         query = 'SELECT * FROM users WHERE email = %s', (email,)
         self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())[0]
-        print(res)
+        # print(res)
         pas = res['password']
         if not res:
             print('Нет такого')
             return False
-        print(pas)
+        # print(pas)
         if check_password_hash(pas, password):
             print('СОШЛОСЬ')
             return res['category']
@@ -221,13 +221,13 @@ class Database:
         query = 'SELECT COUNT(*) as count FROM users WHERE email LIKE %s', (email,)
         self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())
-        print(res)
+        # print(res)
         if res[0]['count'] > 0:
             print("Пользователь с таким email уже существует")
             return False
 
         query = 'INSERT INTO users (email, password) VALUES (%s, %s)', (email, psw)
-        self.cur.execute(query)
+        self.cur.execute(*query)
         self.con.commit()
         return True
 
@@ -289,7 +289,7 @@ class Database:
         query_again = 'SELECT id FROM orders WHERE number_order = %s', (number,)
         self.cur.execute(*query_again)
         order_id = self.prepare_data(self.cur.fetchall())[0]['id']
-        print(order_id)
+        # print(order_id)
         for product in products:
             query = 'INSERT INTO products_ordered (order_id, product_id, count_product)' \
                     'VALUES (%s, %s, %s)', (order_id, product['id'], product['count'])
@@ -308,7 +308,7 @@ class Database:
         query = 'SELECT * from orders where user_id = %s', (user_id,)
         self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())
-        print(res)
+        # print(res)
         if not res:
             print('Нет такого')
             return False
@@ -329,7 +329,7 @@ class Database:
         query = 'SELECT * from products_ordered where order_id = %s', (order_id,)
         self.cur.execute(*query)
         res = self.prepare_data(self.cur.fetchall())
-        print(res)
+        # print(res)
         if not res:
             print('Нет такого')
             return False

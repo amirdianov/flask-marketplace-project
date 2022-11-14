@@ -70,19 +70,20 @@
                         </h5>
                         <p class="card-text">{{ p.text_info[0:200] }}...</p>
                         <hr>
-                        <br>
-                        <br>
+
                         {% if  current_user.is_authenticated %}
+                            <br>
+                            <br>
                             <div class="buttons" style="position: absolute; bottom: 5px; ">
-{#                                {% if p.count_product <=5 %}#}
-                                    {% if p.id in users_products.keys() %}
-                                        <small><b style="color: #7569b0" id="left{{ p.id }}"
-                                                  class="left">Осталось {{ p.count_product - users_products[p.id] }}шт</b></small>
-                                    {% else %}
-                                        <small><b style="color: #7569b0" id="left{{ p.id }}"
-                                                  class="left">Осталось {{ p.count_product}}шт</b></small>
-                                    {% endif %}
-{#                                {% endif %}#}
+                                {#                                {% if p.count_product <=5 %}#}
+                                {% if p.id in users_products.keys() %}
+                                    <small><b style="color: #7569b0" id="left{{ p.id }}"
+                                              class="left">Осталось {{ p.count_product - users_products[p.id] }}шт</b></small>
+                                {% else %}
+                                    <small><b style="color: #7569b0" id="left{{ p.id }}"
+                                              class="left">Осталось {{ p.count_product }}шт</b></small>
+                                {% endif %}
+                                {#                                {% endif %}#}
                                 <br>
                                 {% if p.id in users_products %}
                                     <button id="button_change_plus{{ p.id }}"

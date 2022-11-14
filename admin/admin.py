@@ -80,7 +80,7 @@ def product_photo(product_id):
     if not img:
         return ''
     h = make_response(img)
-    h.headers['Content-Type'] = 'image/png'
+    h.headers['Content-Type'] = 'image/jpg'
     return h
 
 
@@ -130,7 +130,8 @@ def add_product_page():
                 flash("Товар добавлен", "success")
                 file.save(os.path.join(IMG + UPLOAD_FOLDER, 'products/', filename))
 
-            flash("Ошибка добавления", "error")
+            else:
+                flash("Ошибка добавления", "error")
 
             return redirect(url_for('.all_products_page'))
         elif request.form.get('change'):
