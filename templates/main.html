@@ -45,193 +45,195 @@
     </form>
 {% endblock %}
 {% block content %}
-    {{ super() }}
-    {% for cat, msg in get_flashed_messages(True) %}
-        <div class="flash {{ cat }}">{{ msg }}</div>
-    {% endfor %}
-    {#    <h5 class="start">Market Place</h5>#}
-    <hr style="    border: none; /* Убираем границу */
+    <div class="inform">
+        {{ super() }}
+        {% for cat, msg in get_flashed_messages(True) %}
+            <div class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+        {#    <h5 class="start">Market Place</h5>#}
+        <hr style="    border: none; /* Убираем границу */
     background-color: #370ff3; /* Цвет линии */
     color: #403866; /* Цвет линии для IE6-7 */
     height: 10px; /* Толщина линии */">
-    <div class="cont">
-        <div class="row">
-{#            <div class="col-2" style="">#}
-{#                <div class="col">#}
-{#                    <div>Фильтр1</div>#}
-{#                    <div>Фильтр2</div>#}
-{#                </div>#}
-{#            </div>#}
-            <div class="col-12">
-                <div class="row row-cols-1 row-cols-md-4 g-3">
-                    {% for p in products %}
-                        <div class="col">
-                            <div class="card h-100">
-                                <a class="text-muted" href="{{ url_for('detail_product_page', product_id=p.id) }}">
-                                    <img src="{{ p.image_path }}" class="card-img-top" alt="Карточка">
-                                </a>
-                                <div class="card-body">
-                                    <h5 style="color: #7569b0"><a style="color: #7569b0; text-decoration: none"
-                                                                  href="{{ url_for('detail_product_page', product_id=p.id) }}">
-                                        {{ p.product_name |safe|truncate(25) }}                         </a>
+        <div class="cont">
+            <div class="row">
+                {#            <div class="col-2" style="">#}
+                {#                <div class="col">#}
+                {#                    <div>Фильтр1</div>#}
+                {#                    <div>Фильтр2</div>#}
+                {#                </div>#}
+                {#            </div>#}
+                <div class="col-12">
+                    <div class="row row-cols-1 row-cols-md-4 g-3">
+                        {% for p in products %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    <a class="text-muted" href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                                        <img src="{{ p.image_path }}" class="card-img-top" alt="Карточка">
+                                    </a>
+                                    <div class="card-body">
+                                        <h5 style="color: #7569b0"><a style="color: #7569b0; text-decoration: none"
+                                                                      href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                                            {{ p.product_name |safe|truncate(25) }}                         </a>
+                                            <hr>
+                                            Цена - {{ p.price }}р
+                                        </h5>
+                                        <p class="card-text">{{ p.text_info[0:100] }}...</p>
                                         <hr>
-                                        Цена - {{ p.price }}р
-                                    </h5>
-                                    <p class="card-text">{{ p.text_info[0:100] }}...</p>
-                                    <hr>
 
-                                    {% if  current_user.is_authenticated %}
-                                        <br>
-                                        <br>
-                                        <div class="buttons" style="position: absolute; bottom: 5px; ">
-                                            {#                                {% if p.count_product <=5 %}#}
-                                            {% if p.id in users_products.keys() %}
-                                                <small><b style="color: #7569b0" id="left{{ p.id }}"
-                                                          class="left">Осталось {{ p.count_product - users_products[p.id] }}шт</b></small>
-                                            {% else %}
-                                                <small><b style="color: #7569b0" id="left{{ p.id }}"
-                                                          class="left">Осталось {{ p.count_product }}шт</b></small>
-                                            {% endif %}
-                                            {#                                {% endif %}#}
+                                        {% if  current_user.is_authenticated %}
                                             <br>
-                                            {% if p.id in users_products %}
-                                                <button id="button_change_plus{{ p.id }}"
-                                                        class="button-backet-small plus"
-                                                        name="button_plus{{ p.id }}"
-                                                        value="{{ p.id }}">+
-                                                </button>
-                                                <b id="texting{{ p.id }}"
-                                                   style="color: #7569b0">{{ users_products[p.id] }}шт</b>
-                                                <button id="button_change_minus{{ p.id }}"
-                                                        class="button-backet-small minus"
-                                                        name="button_minus{{ p.id }}"
-                                                        value="{{ p.id }}">-
-                                                </button>
-                                                <button class="button-backet"
-                                                        id="button_backet{{ p.id }}"
-                                                        name="backet_go"
-                                                        value="{{ p.id }}"
-                                                        type="submit" style="display: none">В корзину
-                                                </button>
-                                                {% if p.id not in users_saved_prodcuts %}
-                                                    <button id="saved{{ p.id }}" type="submit" name="saved"
-                                                            class="button-saved saved_go"
-                                                            value="{{ p.id }}"><span
-                                                            id="texting_saved{{ p.id }}">В избранное</span>
-
-                                                    </button>
+                                            <br>
+                                            <div class="buttons" style="position: absolute; bottom: 5px; ">
+                                                {#                                {% if p.count_product <=5 %}#}
+                                                {% if p.id in users_products.keys() %}
+                                                    <small><b style="color: #7569b0" id="left{{ p.id }}"
+                                                              class="left">Осталось {{ p.count_product - users_products[p.id] }}шт</b></small>
                                                 {% else %}
-                                                    <button id="saved{{ p.id }}" type="submit" name="saved"
-                                                            class="saved_out"
-                                                            value="{{ p.id }}"><span
-                                                            id="texting_saved{{ p.id }}">Понравилось</span>
-
-                                                    </button>
+                                                    <small><b style="color: #7569b0" id="left{{ p.id }}"
+                                                              class="left">Осталось {{ p.count_product }}шт</b></small>
                                                 {% endif %}
-                                            {% else %}
-                                                <button id="button_change_plus{{ p.id }}"
-                                                        class="button-backet-small plus"
-                                                        name="button_plus{{ p.id }}"
-                                                        value="{{ p.id }}" style="display:none;">+
-                                                </button>
-                                                <b id="texting{{ p.id }}"
-                                                   style="display:none;">{{ users_products[p.id] }}шт</b>
-                                                <button id="button_change_minus{{ p.id }}"
-                                                        class="button-backet-small minus"
-                                                        name="button_minus{{ p.id }}"
-                                                        value="{{ p.id }}" style="display:none;">-
-                                                </button>
-                                                <button class=" button-backet"
-                                                        id="button_backet{{ p.id }}"
-                                                        name="backet_go"
-                                                        value="{{ p.id }}"
-                                                        type="submit">В корзину
-                                                </button>
-                                                {% if p.id not in users_saved_prodcuts %}
-                                                    <button id="saved{{ p.id }}" type="submit" name="saved"
-                                                            class="button-saved saved_go"
-                                                            value="{{ p.id }}"><span
-                                                            id="texting_saved{{ p.id }}">В избранное</span>
-
+                                                {#                                {% endif %}#}
+                                                <br>
+                                                {% if p.id in users_products %}
+                                                    <button id="button_change_plus{{ p.id }}"
+                                                            class="button-backet-small plus"
+                                                            name="button_plus{{ p.id }}"
+                                                            value="{{ p.id }}">+
                                                     </button>
+                                                    <b id="texting{{ p.id }}"
+                                                       style="color: #7569b0">{{ users_products[p.id] }}шт</b>
+                                                    <button id="button_change_minus{{ p.id }}"
+                                                            class="button-backet-small minus"
+                                                            name="button_minus{{ p.id }}"
+                                                            value="{{ p.id }}">-
+                                                    </button>
+                                                    <button class="button-backet"
+                                                            id="button_backet{{ p.id }}"
+                                                            name="backet_go"
+                                                            value="{{ p.id }}"
+                                                            type="submit" style="display: none">В корзину
+                                                    </button>
+                                                    {% if p.id not in users_saved_prodcuts %}
+                                                        <button id="saved{{ p.id }}" type="submit" name="saved"
+                                                                class="button-saved saved_go"
+                                                                value="{{ p.id }}"><span
+                                                                id="texting_saved{{ p.id }}">В избранное</span>
+
+                                                        </button>
+                                                    {% else %}
+                                                        <button id="saved{{ p.id }}" type="submit" name="saved"
+                                                                class="saved_out"
+                                                                value="{{ p.id }}"><span
+                                                                id="texting_saved{{ p.id }}">Понравилось</span>
+
+                                                        </button>
+                                                    {% endif %}
                                                 {% else %}
-                                                    <button id="saved{{ p.id }}" type="submit" name="saved"
-                                                            class="saved_out"
-                                                            value="{{ p.id }}"><span
-                                                            id="texting_saved{{ p.id }}">Понравилось</span>
-
+                                                    <button id="button_change_plus{{ p.id }}"
+                                                            class="button-backet-small plus"
+                                                            name="button_plus{{ p.id }}"
+                                                            value="{{ p.id }}" style="display:none;">+
                                                     </button>
-                                                {% endif %}
-                                            {% endif %}
+                                                    <b id="texting{{ p.id }}"
+                                                       style="display:none;">{{ users_products[p.id] }}шт</b>
+                                                    <button id="button_change_minus{{ p.id }}"
+                                                            class="button-backet-small minus"
+                                                            name="button_minus{{ p.id }}"
+                                                            value="{{ p.id }}" style="display:none;">-
+                                                    </button>
+                                                    <button class=" button-backet"
+                                                            id="button_backet{{ p.id }}"
+                                                            name="backet_go"
+                                                            value="{{ p.id }}"
+                                                            type="submit">В корзину
+                                                    </button>
+                                                    {% if p.id not in users_saved_prodcuts %}
+                                                        <button id="saved{{ p.id }}" type="submit" name="saved"
+                                                                class="button-saved saved_go"
+                                                                value="{{ p.id }}"><span
+                                                                id="texting_saved{{ p.id }}">В избранное</span>
 
-                                        </div>
-                                    {% endif %}
+                                                        </button>
+                                                    {% else %}
+                                                        <button id="saved{{ p.id }}" type="submit" name="saved"
+                                                                class="saved_out"
+                                                                value="{{ p.id }}"><span
+                                                                id="texting_saved{{ p.id }}">Понравилось</span>
+
+                                                        </button>
+                                                    {% endif %}
+                                                {% endif %}
+
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endfor %}
-                    <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
-                    <script>
-                        $('.plus, .minus, .button-backet').on('click', function () {
-                            $.ajax({
-                                url: '{{ url_for('ajax_button_backet') }}',
-                                method: 'post',
-                                dataType: 'html',
-                                data: {
-                                    'id': $(this).val(),
-                                    'name': $(this).attr("name"),
-                                },
-                                success: function (smt) {
-                                    smt = JSON.parse(smt)
-                                    if (smt['make_two_buttons'] === true) {
-                                        document.getElementById('button_backet' + smt['id']).style.display = "none";
-                                        document.getElementById('button_change_plus' + smt['id']).style.display = "";
-                                        document.getElementById('button_change_minus' + smt['id']).style.display = "";
-                                        document.getElementById('texting' + smt['id']).style.display = ""
-                                        document.getElementById('texting' + smt['id']).style.color = "#7569b0"
-                                        $('#texting' + smt['id']).html(1 + 'шт')
-                                        $('#left' + smt['id']).html('Осталось ' + smt['left'] + 'шт')
-                                    } else {
-                                        if (smt['count'] === false) {
-                                            document.getElementById('button_backet' + smt['id']).style.display = "";
-                                            document.getElementById('button_change_plus' + smt['id']).style.display = "none";
-                                            document.getElementById('button_change_minus' + smt['id']).style.display = "none";
-                                            document.getElementById('texting' + smt['id']).style.display = "none"
+                        {% endfor %}
+                        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+                        <script>
+                            $('.plus, .minus, .button-backet').on('click', function () {
+                                $.ajax({
+                                    url: '{{ url_for('ajax_button_backet') }}',
+                                    method: 'post',
+                                    dataType: 'html',
+                                    data: {
+                                        'id': $(this).val(),
+                                        'name': $(this).attr("name"),
+                                    },
+                                    success: function (smt) {
+                                        smt = JSON.parse(smt)
+                                        if (smt['make_two_buttons'] === true) {
+                                            document.getElementById('button_backet' + smt['id']).style.display = "none";
+                                            document.getElementById('button_change_plus' + smt['id']).style.display = "";
+                                            document.getElementById('button_change_minus' + smt['id']).style.display = "";
+                                            document.getElementById('texting' + smt['id']).style.display = ""
+                                            document.getElementById('texting' + smt['id']).style.color = "#7569b0"
+                                            $('#texting' + smt['id']).html(1 + 'шт')
                                             $('#left' + smt['id']).html('Осталось ' + smt['left'] + 'шт')
-
                                         } else {
-                                            $('#texting' + smt['id']).html(smt['count'] + 'шт')
-                                            $('#left' + smt['id']).html('Осталось ' + smt['left'] + 'шт')
+                                            if (smt['count'] === false) {
+                                                document.getElementById('button_backet' + smt['id']).style.display = "";
+                                                document.getElementById('button_change_plus' + smt['id']).style.display = "none";
+                                                document.getElementById('button_change_minus' + smt['id']).style.display = "none";
+                                                document.getElementById('texting' + smt['id']).style.display = "none"
+                                                $('#left' + smt['id']).html('Осталось ' + smt['left'] + 'шт')
+
+                                            } else {
+                                                $('#texting' + smt['id']).html(smt['count'] + 'шт')
+                                                $('#left' + smt['id']).html('Осталось ' + smt['left'] + 'шт')
+                                            }
                                         }
                                     }
-                                }
+                                })
                             })
-                        })
-                        $('.saved_go, .saved_out').on('click', function () {
-                            $.ajax({
-                                url: '{{ url_for('ajax_button_saved') }}',
-                                method: 'post',
-                                dataType: 'html',
-                                data: {
-                                    'id': $(this).val(),
-                                    'name': $(this).attr("name"),
-                                    'class': $(this).attr("class")
-                                },
-                                success: function (smt) {
-                                    smt = JSON.parse(smt)
-                                    if (smt['saved_go'] === true) {
-                                        $('#saved' + smt['id']).attr("class", 'saved_out');
-                                        $('#texting_saved' + smt['id']).html('Понравилось')
+                            $('.saved_go, .saved_out').on('click', function () {
+                                $.ajax({
+                                    url: '{{ url_for('ajax_button_saved') }}',
+                                    method: 'post',
+                                    dataType: 'html',
+                                    data: {
+                                        'id': $(this).val(),
+                                        'name': $(this).attr("name"),
+                                        'class': $(this).attr("class")
+                                    },
+                                    success: function (smt) {
+                                        smt = JSON.parse(smt)
+                                        if (smt['saved_go'] === true) {
+                                            $('#saved' + smt['id']).attr("class", 'saved_out');
+                                            $('#texting_saved' + smt['id']).html('Понравилось')
 
-                                    } else if (smt['saved_out'] === true) {
-                                        $('#saved' + smt['id']).attr("class", 'button-saved saved_go');
-                                        $('#texting_saved' + smt['id']).html('В избранное')
+                                        } else if (smt['saved_out'] === true) {
+                                            $('#saved' + smt['id']).attr("class", 'button-saved saved_go');
+                                            $('#texting_saved' + smt['id']).html('В избранное')
 
+                                        }
                                     }
-                                }
+                                })
                             })
-                        })
-                    </script>
+                        </script>
+                    </div>
                 </div>
             </div>
         </div>

@@ -22,129 +22,131 @@
     {% endif %}
 {% endblock %}
 {% block content %}
-    {% for cat, msg in get_flashed_messages(True) %}
-        <div class="flash {{ cat }}">{{ msg }}</div>
-    {% endfor %}
-    <div class="row row-cols-1 row-cols-md-4 g-4" style="margin-top: 0">
-        {% for p in products %}
-            <div class="col">
-                <div class="card h-100">
-                    <a class="text-muted" href="{{ url_for('detail_product_page', product_id=p.id) }}">
-                        <img src="{{ p.image_path }}" class="card-img-top" alt="Карточка">
-                    </a>
-                    <div class="card-body">
-                        <h5 style="color: #7569b0"><a style="color: #7569b0; text-decoration: none"
-                                                      href="{{ url_for('detail_product_page', product_id=p.id) }}">
-                            {{ p.product_name | safe|truncate(25) }}                         </a>
-                            <hr>
-                            Цена - {{ p.price }}р
-                        </h5>
-                        <p class="card-text">{{ p.text_info | safe|truncate(150) }}...</p>
-                        </br>
+    <div class="inform">
+        {% for cat, msg in get_flashed_messages(True) %}
+            <div class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+        <div class="row row-cols-1 row-cols-md-4 g-4" style="margin-top: 0">
+            {% for p in products %}
+                <div class="col">
+                    <div class="card h-100">
+                        <a class="text-muted" href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                            <img src="{{ p.image_path }}" class="card-img-top" alt="Карточка">
+                        </a>
+                        <div class="card-body">
+                            <h5 style="color: #7569b0"><a style="color: #7569b0; text-decoration: none"
+                                                          href="{{ url_for('detail_product_page', product_id=p.id) }}">
+                                {{ p.product_name | safe|truncate(25) }}                         </a>
+                                <hr>
+                                Цена - {{ p.price }}р
+                            </h5>
+                            <p class="card-text">{{ p.text_info | safe|truncate(150) }}...</p>
+                            </br>
 
-                        {% if  current_user.is_authenticated %}
-                            <div class="buttons" style="position: absolute; bottom: 5px; ">
-                                {% if p.id in users_products %}
-                                    <button id="button_change_plus{{ p.id }}"
-                                            class="button-backet-small plus"
-                                            name="button_plus{{ p.id }}"
-                                            value="{{ p.id }}">+
-                                    </button>
-                                    <b id="texting{{ p.id }}">{{ users_products[p.id] }}шт</b>
-                                    <button id="button_change_minus{{ p.id }}"
-                                            class="button-backet-small minus"
-                                            name="button_minus{{ p.id }}"
-                                            value="{{ p.id }}">-
-                                    </button>
-                                    <button class="button-backet"
-                                            id="button_backet{{ p.id }}"
-                                            name="backet_go"
-                                            value="{{ p.id }}"
-                                            type="submit" style="display: none">В корзину
-                                    </button>
-                                    {#                                    <form action="{{ url_for('saved_page') }}" method="POST">#}
-                                    <button type="submit" id="button_saved{{ p.id }}" name="saved_out"
-                                            class="saved_out" value="{{ p.id }}">Удалить
-                                    </button>
-                                    {#                                    </form>#}
-                                {% else %}
-                                    <button id="button_change_plus{{ p.id }}"
-                                            class="button-backet-small plus"
-                                            name="button_plus{{ p.id }}"
-                                            value="{{ p.id }}" style="display:none;">+
-                                    </button>
-                                    <b id="texting{{ p.id }}" style="display:none;">{{ users_products[p.id] }}шт</b>
-                                    <button id="button_change_minus{{ p.id }}"
-                                            class="button-backet-small minus"
-                                            name="button_minus{{ p.id }}"
-                                            value="{{ p.id }}" style="display:none;">-
-                                    </button>
-                                    <button class=" button-backet"
-                                            id="button_backet{{ p.id }}"
-                                            name="backet_go"
-                                            value="{{ p.id }}"
-                                            type="submit">В корзину
-                                    </button>
-                                    {#                                    <form action="{{ url_for('saved_page') }}" method="POST">#}
-                                    <button type="submit" id="button_saved{{ p.id }}" name="saved_out"
-                                            class="saved_out" value="{{ p.id }}">Удалить
-                                    </button>
-                                    {#                                    </form>#}
-                                {% endif %}
+                            {% if  current_user.is_authenticated %}
+                                <div class="buttons" style="position: absolute; bottom: 5px; ">
+                                    {% if p.id in users_products %}
+                                        <button id="button_change_plus{{ p.id }}"
+                                                class="button-backet-small plus"
+                                                name="button_plus{{ p.id }}"
+                                                value="{{ p.id }}">+
+                                        </button>
+                                        <b id="texting{{ p.id }}">{{ users_products[p.id] }}шт</b>
+                                        <button id="button_change_minus{{ p.id }}"
+                                                class="button-backet-small minus"
+                                                name="button_minus{{ p.id }}"
+                                                value="{{ p.id }}">-
+                                        </button>
+                                        <button class="button-backet"
+                                                id="button_backet{{ p.id }}"
+                                                name="backet_go"
+                                                value="{{ p.id }}"
+                                                type="submit" style="display: none">В корзину
+                                        </button>
+                                        {#                                    <form action="{{ url_for('saved_page') }}" method="POST">#}
+                                        <button type="submit" id="button_saved{{ p.id }}" name="saved_out"
+                                                class="saved_out" value="{{ p.id }}">Удалить
+                                        </button>
+                                        {#                                    </form>#}
+                                    {% else %}
+                                        <button id="button_change_plus{{ p.id }}"
+                                                class="button-backet-small plus"
+                                                name="button_plus{{ p.id }}"
+                                                value="{{ p.id }}" style="display:none;">+
+                                        </button>
+                                        <b id="texting{{ p.id }}" style="display:none;">{{ users_products[p.id] }}шт</b>
+                                        <button id="button_change_minus{{ p.id }}"
+                                                class="button-backet-small minus"
+                                                name="button_minus{{ p.id }}"
+                                                value="{{ p.id }}" style="display:none;">-
+                                        </button>
+                                        <button class=" button-backet"
+                                                id="button_backet{{ p.id }}"
+                                                name="backet_go"
+                                                value="{{ p.id }}"
+                                                type="submit">В корзину
+                                        </button>
+                                        {#                                    <form action="{{ url_for('saved_page') }}" method="POST">#}
+                                        <button type="submit" id="button_saved{{ p.id }}" name="saved_out"
+                                                class="saved_out" value="{{ p.id }}">Удалить
+                                        </button>
+                                        {#                                    </form>#}
+                                    {% endif %}
 
-                            </div>
-                        {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
-    <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
-    <script>
-        $('.plus, .minus, .button-backet').on('click', function () {
-            $.ajax({
-                url: '{{ url_for('ajax_button_backet') }}',
-                method: 'post',
-                dataType: 'html',
-                data: {
-                    'id': $(this).val(),
-                    'name': $(this).attr("name"),
-                },
-                success: function (smt) {
-                    smt = JSON.parse(smt)
-                    if (smt['make_two_buttons'] === true) {
-                        document.getElementById('button_backet' + smt['id']).style.display = "none";
-                        document.getElementById('button_change_plus' + smt['id']).style.display = "";
-                        document.getElementById('button_change_minus' + smt['id']).style.display = "";
-                        document.getElementById('texting' + smt['id']).style.display = ""
-                        $('#texting' + smt['id']).html(1 + 'шт')
+            {% endfor %}
+        </div>
+        <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+        <script>
+            $('.plus, .minus, .button-backet').on('click', function () {
+                $.ajax({
+                    url: '{{ url_for('ajax_button_backet') }}',
+                    method: 'post',
+                    dataType: 'html',
+                    data: {
+                        'id': $(this).val(),
+                        'name': $(this).attr("name"),
+                    },
+                    success: function (smt) {
+                        smt = JSON.parse(smt)
+                        if (smt['make_two_buttons'] === true) {
+                            document.getElementById('button_backet' + smt['id']).style.display = "none";
+                            document.getElementById('button_change_plus' + smt['id']).style.display = "";
+                            document.getElementById('button_change_minus' + smt['id']).style.display = "";
+                            document.getElementById('texting' + smt['id']).style.display = ""
+                            $('#texting' + smt['id']).html(1 + 'шт')
 
-                    } else {
-                        if (smt['count'] === false) {
-                            document.getElementById('button_backet' + smt['id']).style.display = "";
-                            document.getElementById('button_change_plus' + smt['id']).style.display = "none";
-                            document.getElementById('button_change_minus' + smt['id']).style.display = "none";
-                            document.getElementById('texting' + smt['id']).style.display = "none"
                         } else {
-                            $('#texting' + smt['id']).html(smt['count'] + 'шт')
+                            if (smt['count'] === false) {
+                                document.getElementById('button_backet' + smt['id']).style.display = "";
+                                document.getElementById('button_change_plus' + smt['id']).style.display = "none";
+                                document.getElementById('button_change_minus' + smt['id']).style.display = "none";
+                                document.getElementById('texting' + smt['id']).style.display = "none"
+                            } else {
+                                $('#texting' + smt['id']).html(smt['count'] + 'шт')
+                            }
                         }
                     }
-                }
+                })
             })
-        })
-        $('.saved_out').on('click', function () {
-            $.ajax({
-                url: '{{ url_for('ajax_button_in_saved') }}',
-                method: 'post',
-                dataType: 'html',
-                data: {
-                    'id': $(this).val(),
-                    'name': $(this).attr("name"),
-                },
-                success: function (smt) {
-                    window.location.href = "http://127.0.0.1:5000/saved"
-                }
+            $('.saved_out').on('click', function () {
+                $.ajax({
+                    url: '{{ url_for('ajax_button_in_saved') }}',
+                    method: 'post',
+                    dataType: 'html',
+                    data: {
+                        'id': $(this).val(),
+                        'name': $(this).attr("name"),
+                    },
+                    success: function (smt) {
+                        window.location.href = "http://127.0.0.1:5000/saved"
+                    }
+                })
             })
-        })
-    </script>
+        </script>
+    </div>
 {% endblock %}
