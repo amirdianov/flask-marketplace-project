@@ -5,65 +5,67 @@
     <a class="nav-link" href={{ url_for('login_page') }}>Войти</a>
 {% endblock %}
 {% block content %}
-    {{ super() }}
-    {% for cat, msg in get_flashed_messages(True) %}
-        <div class="flash {{ cat }}">{{ msg }}</div>
-    {% endfor %}
+    <div class="inform">
+        {{ super() }}
+        {% for cat, msg in get_flashed_messages(True) %}
+            <div class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
 
-    <div class="limiter">
-        <div class="container-login100">
-            <div class="wrap-login100 p-t-50 p-b-90">
-                <form action="" method="post" class="form-contact login100-form validate-form flex-sb flex-w">
-                    {{ form.hidden_tag() }}
-                    <span class="login100-form-title p-b-51">
+        <div class="limiter">
+            <div class="container-login100">
+                <div class="wrap-login100 p-t-50 p-b-90">
+                    <form action="" method="post" class="form-contact login100-form validate-form flex-sb flex-w">
+                        {{ form.hidden_tag() }}
+                        <span class="login100-form-title p-b-51">
                         Registration
                     </span>
-                    {% for field in form if field.name not in  ['csrf_token', 'submit'] %}
-                        <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
-                            {% if field.errors %}
-                                {% if field.name == 'name' %}
-                                    {{ field(class='input100 input-registration-login invalid', placeholder='Name') }}
-                                {% elif field.name == 'email' %}
-                                    {{ field(class='input100 input-registration-login invalid', placeholder='Email') }}
-                                {% elif field.name == 'password' %}
-                                    {{ field(class='input100 input-registration-login invalid', placeholder='Password') }}
-                                {% elif field.name == 'password2' %}
-                                    {{ field(class='input100 input-registration-login invalid', placeholder='Again password') }}
-                                {% endif %}
-                                <span class="invalid-answer">
+                        {% for field in form if field.name not in  ['csrf_token', 'submit'] %}
+                            <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
+                                {% if field.errors %}
+                                    {% if field.name == 'name' %}
+                                        {{ field(class='input100 input-registration-login invalid', placeholder='Name') }}
+                                    {% elif field.name == 'email' %}
+                                        {{ field(class='input100 input-registration-login invalid', placeholder='Email') }}
+                                    {% elif field.name == 'password' %}
+                                        {{ field(class='input100 input-registration-login invalid', placeholder='Password') }}
+                                    {% elif field.name == 'password2' %}
+                                        {{ field(class='input100 input-registration-login invalid', placeholder='Again password') }}
+                                    {% endif %}
+                                    <span class="invalid-answer">
                                 {% for e in field.errors %}
                                     {{ e }}
                                 {% endfor %}
                                 </span>
-                            {% else %}
-                                {% if field.name == 'name' %}
-                                    <div class="line-form">
-                                        {{ field(class='input100 input-registration-login', placeholder='Name') }}
-                                    </div>
-                                {% elif field.name == 'email' %}
-                                    <div class="line-form">
-                                        {{ field(class='input100 input-registration-login', placeholder='Email') }}
-                                    </div>
-                                {% elif field.name == 'password' %}
+                                {% else %}
+                                    {% if field.name == 'name' %}
+                                        <div class="line-form">
+                                            {{ field(class='input100 input-registration-login', placeholder='Name') }}
+                                        </div>
+                                    {% elif field.name == 'email' %}
+                                        <div class="line-form">
+                                            {{ field(class='input100 input-registration-login', placeholder='Email') }}
+                                        </div>
+                                    {% elif field.name == 'password' %}
 
-                                    <div class="line-form">
-                                        {{ field(class='input100 input-registration-login', placeholder='Password') }}
-                                    </div>
-                                {% elif field.name == 'password2' %}
+                                        <div class="line-form">
+                                            {{ field(class='input100 input-registration-login', placeholder='Password') }}
+                                        </div>
+                                    {% elif field.name == 'password2' %}
 
-                                    <div class="line-form">
-                                        {{ field(class='input100 input-registration-login', placeholder='Again password') }}
-                                    </div>
+                                        <div class="line-form">
+                                            {{ field(class='input100 input-registration-login', placeholder='Again password') }}
+                                        </div>
+                                    {% endif %}
+
                                 {% endif %}
-
-                            {% endif %}
-                            <span class="focus-input100"></span>
+                                <span class="focus-input100"></span>
+                            </div>
+                        {% endfor %}
+                        <div class="container-login100-form-btn m-t-17">
+                            <p>{{ form.submit(class='login100-form-btn') }}
                         </div>
-                    {% endfor %}
-                    <div class="container-login100-form-btn m-t-17">
-                        <p>{{ form.submit(class='login100-form-btn') }}
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

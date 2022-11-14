@@ -44,33 +44,35 @@
     {% endif %}
 {% endblock %}
 {% block content %}
-    <table style=";border: 3px groove #7c6ec5;width: 100%;margin-top: 10px">
-        <tr>
-            <th>Продукты</th>
-            <th>Количество</th>
-            <th>Сумма</th>
-        </tr>
-        {% set flag = True %}
-        {% for product in products %}
+    <div class="inform">
+        <table style=";border: 3px groove #7c6ec5;width: 100%;margin-top: 10px">
             <tr>
-                <td>
-                    <a style="color: #7569b0;"
-                       href="{{ url_for('detail_product_page', product_id=product.id) }}">
-                        <h5>{{ product.product_name }}</h5></a>
-                </td>
-                <td>
-                    <h5>{{ product.product_count }}</h5>
-                </td>
-                <td>
-                    <h5>{{ product.summary }}</h5>
+                <th>Продукты</th>
+                <th>Количество</th>
+                <th>Сумма</th>
             </tr>
-        {% endfor %}
-        <tr>
-            <td><h5>Итого</h5></td>
-            <td><h5>{{ count_order }}</h5></td>
-            <td><h5>{{ summary_order }}</h5></td>
-        </tr>
+            {% set flag = True %}
+            {% for product in products %}
+                <tr>
+                    <td>
+                        <a style="color: #7569b0;"
+                           href="{{ url_for('detail_product_page', product_id=product.id) }}">
+                            <h5>{{ product.product_name }}</h5></a>
+                    </td>
+                    <td>
+                        <h5>{{ product.product_count }}</h5>
+                    </td>
+                    <td>
+                        <h5>{{ product.summary }}</h5>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td><h5>Итого</h5></td>
+                <td><h5>{{ count_order }}</h5></td>
+                <td><h5>{{ summary_order }}</h5></td>
+            </tr>
 
 
-    </table>
+        </table>
+    </div>
 {% endblock %}

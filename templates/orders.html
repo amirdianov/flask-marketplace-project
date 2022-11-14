@@ -44,6 +44,7 @@
     {% endif %}
 {% endblock %}
 {% block content %}
+    <div class="inform">
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{ cat }}">{{ msg }}</div>
     {% endfor %}
@@ -73,6 +74,7 @@
                 </tr>
             {% endfor %}
         </table>
+    </div>
 {#        <div style="border-radius: 10px">#}
 {#            <a style="color: #7569b0; "#}
 {#               href="{{ url_for('order_info_page', num=order.number_order) }}">#}
