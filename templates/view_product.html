@@ -1,23 +1,21 @@
 {% extends 'base.html' %}
 {% block nav %}
-    <a class="nav-link" aria-current="page" href={{ url_for('main_page_all') }}>Главная
+    <a class="nav-link active" aria-current="page" href={{ url_for('main_page_all') }}
+            xmlns="http://www.w3.org/1999/html">Главная
         страница</a>
     {% if  current_user.is_authenticated %}
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+               data-toggle="dropdown"
                aria-expanded="false">Личный кабинет
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="{{ url_for('profile_page') }}">Профиль</a></li>
                 <li><a class="dropdown-item" href="{{ url_for('saved_page') }}">Избранное</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('backet') }}">Корзина</a></li>
                 <li><a class="dropdown-item" href="{{ url_for('orders_page') }}">Заказы</a></li>
             </ul>
         </li>
-        {% if backet %}
-            {% block backet_nav %}
-                <a class="nav-link" href={{ url_for('backet') }}>Корзина</a>
-            {% endblock %}
-        {% endif %}
         <a class="nav-link" href={{ url_for('logout') }}>Выйти</a>
     {% else %}
         <a class="nav-link" aria-current="page" href={{ url_for('registration_page') }}>Зарегистрироваться</a>
