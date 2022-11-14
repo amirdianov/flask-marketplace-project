@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block nav %}
     <a class="nav-link active" aria-current="page" href={{ url_for('main_page_all') }}
             xmlns="http://www.w3.org/1999/html">Главная
@@ -27,17 +28,30 @@
     {#    {% for key, val in product.items() %}#}
     {#        <p>{{ key }}-{{ val }}</p>#}
     {#    {% endfor %}#}
-    <div class="card" style="width: 700px; margin: 20px auto;">
-        <img src="{{ product.image_path }}" class="card-img-top" alt="...">
-        <div class="card-body">
-            <b style="font-size: 25px" class="card-title">{{ product.product_name }}</b>
-            <br>
-            <u><b style="font-size: 20px">Цена товара</b> <b class="card-text">{{ product.price }}р</b></u>
-            <br>
-            <br>
-            <b style="font-size: 20px">Информация о товаре</b>
-            <p>{{ product.text_info }}</p>
-            <button class="button-backet" onclick=window.history.back()>Назад</button>
+    {#    <div class="card" style="width: 700px; margin: 20px auto;">#}
+    {#        <img src="{{ product.image_path }}" class="card-img-top" alt="...">#}
+    {#        <div class="card-body">#}
+    {#            <b style="font-size: 25px" class="card-title">{{ product.product_name }}</b>#}
+    {#            <br>#}
+    {#            <u><b style="font-size: 20px">Цена товара</b> <b class="card-text">{{ product.price }}р</b></u>#}
+    {#            <br>#}
+    {#            <br>#}
+    {#            <b style="font-size: 20px">Информация о товаре</b>#}
+    {#            <p>{{ product.text_info }}</p>#}
+    {#            <button class="button-backet" onclick=window.history.back()>Назад</button>#}
+    {#        </div>#}
+    {#    </div>#}
+    <div class="container" style="height: 100%">
+        <div class="row justify-content-center align-items-center h-100">
+            <div class="col-6">
+                <img src="{{ product.image_path }}" style="width: 300px; height: 200px" class="card-img-top" alt="...">
+            </div>
+            <div class="col-3 text-center" style="width: 200px; height: 200px">
+                Тут текст
+            </div>
+            <div class="col-3">
+                Тут цена в корзину
+            </div>
         </div>
     </div>
 {% endblock %}

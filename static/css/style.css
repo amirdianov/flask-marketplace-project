@@ -3,6 +3,7 @@
     margin-top: -0.15rem !important;
     margin-left: 0.15rem !important;
     margin-right: 0.15rem !important;
+    flex: 1 0 auto;
 }
 
 .form-contact .invalid {
@@ -48,6 +49,17 @@
 body, html {
     height: 100%;
     font-family: Ubuntu-Regular, sans-serif;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.finish {
+    flex: 0 0 auto;
+    margin: 0px 55px 0px 55px;
 }
 
 body {
