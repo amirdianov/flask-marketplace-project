@@ -1,4 +1,4 @@
-create database marketplace_db;a
+create database marketplace_db;
 
 create table products_categories
 (
