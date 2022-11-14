@@ -28,8 +28,8 @@
     <br>
     <table style="width: 100%">
         <tr>
-            <td>
-                <div style="border: 5px groove #7c6ec5;">
+            <td style="width: 50%">
+                <div style="border: 5px groove #7c6ec5; border-radius: 50px">
                     <br>
                     <ol>
                         {% for i in products %}
@@ -78,31 +78,68 @@
             </td>
             <td>
                 <form action="" method="post">
+{#                                        {{ form.hidden_tag() }}#}
+{#                                        <div class="wrap">#}
+{#                                            <div class="d-flex flex-column align-items-center justify-content-center">#}
+{#                                                <div class="d-flex flex-column align-items-center justify-content-center cont-form">#}
+{#                                                    {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}#}
+{#                                                        <div>{{ field.label(class="form-label") }}</div>#}
+{#                                                        {% if field.errors %}#}
+{#                                                            {{ field(class="form-control invalid") }}#}
+{#                                                            {% for e in field.errors %}#}
+{#                                                                {{ e }}#}
+{#                                                            {% endfor %}#}
+{#                                                        {% else %}#}
+{#                                                            {% if field.label != 'Address' %}#}
+{#                                                                <div>{{ field(class="form-control-login") }}</div>#}
+{#                                                            {% else %}#}
+{#                                                                <div>{{ field(class="form-control-login", name='address') }}</div>#}
+{#                                                            {% endif %}#}
+{#                                                        {% endif %}#}
+{#                                                    {% endfor %}#}
+{#                                                    <button class="button-backet" name="order"#}
+{#                                                            value="Оформление заказа" style="width: 200px">Оформить заказ#}
+{#                                                    </button>#}
+{#                                                </div>#}
+{#                                            </div>#}
+{#                                        </div>#}
                     {{ form.hidden_tag() }}
-                    <div class="wrap">
-                        <div class="d-flex flex-column align-items-center justify-content-center">
-                            <div class="d-flex flex-column align-items-center justify-content-center cont-form">
-                                {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
-                                    <div>{{ field.label(class="form-label") }}</div>
-                                    {% if field.errors %}
-                                        {{ field(class="form-control invalid") }}
-                                        {% for e in field.errors %}
-                                            {{ e }}
-                                        {% endfor %}
-                                    {% else %}
-                                        {% if field.label != 'Address' %}
-                                            <div>{{ field(class="form-control-login") }}</div>
-                                        {% else %}
-                                            <div>{{ field(class="form-control-login", name='address') }}</div>
-                                        {% endif %}
-                                    {% endif %}
+                <div>
+                    <span class="login100-form-title p-b-51">
+                        Make order
+                    </span>
+                    {% for field in form if field.name not in  ['csrf_token', 'submit'] %}
+                        <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
+                            {% if field.errors %}
+                                {% if field.name == 'name' %}
+                                    {{ field(class='input100 input-registration-login invalid', placeholder='Name') }}
+                                {% elif field.name == 'address' %}
+                                    {{ field(class='input100 input-registration-login invalid', placeholder='Address') }}
+                                {% endif %}
+                                <span class="invalid-answer">
+                                {% for e in field.errors %}
+                                    {{ e }}
                                 {% endfor %}
-                                <button class="button-backet" name="order"
-                                        value="Оформление заказа" style="width: 200px">Оформить заказ
-                                </button>
-                            </div>
+                                </span>
+                            {% else %}
+                                {% if field.name == 'name' %}
+                                    <div class="line-form" style="width: 70%; margin: 0 auto 0 auto">
+                                        {{ field(class='input100 input-registration-login', placeholder='Name') }}
+                                    </div>
+                                {% elif field.name == 'address' %}
+
+                                    <div class="line-form" style="width: 70%; margin: 0 auto 0 auto">
+                                        {{ field(class='input100 input-registration-login', placeholder='Address') }}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            <span class="focus-input100"></span>
                         </div>
+                    {% endfor %}
+                    <div class="container-login100-form-btn m-t-17" style="width: 70%; margin: 0 auto 0 auto">
+                        <p>{{ form.submit(class='login100-form-btn') }}
                     </div>
+                </div>
                 </form>
             </td>
         </tr>

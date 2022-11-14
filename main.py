@@ -260,7 +260,7 @@ def backet():
             change_minus_backet(request.form.get('button_minus'))
         elif request.form.get('button_delete'):
             delete_product_session('backet', request.form.get('button_delete'), current_user_id=current_user.get_id())
-        elif request.form.get('order'):
+        elif request.form.get('submit'):
             products = []
             for element in db.getProducts(None, None):
                 for product in session['backet'][current_user.get_id()]:
